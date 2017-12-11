@@ -1,0 +1,12 @@
+-Melhorar robô (Complexidade, Criatividade, Movimentação) -> (5, 5, 7) (NINJA)
+-Consertar a Câmera que segue o robô -> (6) (TIMMY)
+-Textura: Ao menos no chão e paredes do labirinto (NINJA)
+-Iluminação: Incluir pelo menos duas fontes de luz (TIMMY)
+-Transparência: Janela em alguma parede que permita visualizar pra fora do labirinto,
+deve haver um conjunto de coisas a serem olhadas (NINJA)
+-Objetos criados e modelados usando NURBS (TIMMY) 
+-Novas câmeras que permitam inspecionar os objetos e o robô de todos os ângulos (TIMMY)
+-Controle do robô (NINJA)
+----------------------------------------------------------------------------------
+-Melhorar documentação -> (3)
+-Melhorar apresentação -> (6)
