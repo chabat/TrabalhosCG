@@ -248,7 +248,7 @@ void desenhaCadeira(int i, GLdouble grau_roda){
   desenhaCuboRobo();
   //gluCylinder(base, 0.1, 0.1, 6, 50, 25);
   glPopMatrix();
-  
+
   glPushMatrix();
   glTranslatef(-3.75 + sin(grau_roda + i * base_grau_roda) * 5.9, -1, 6.5 + cos(grau_roda + i * base_grau_roda) * 5.9);
   glScalef(0.5, 0.5, 0.1);
@@ -271,7 +271,7 @@ void desenhaRodaGigante(){
   glScalef(10, 0.3, 0.3);
   desenhaCuboRobo();
   glPopMatrix();
-  
+
   glPushMatrix();
   glTranslatef(-8, 0, 3.3);
   glRotatef(-45, 0, 1, 0);
@@ -294,13 +294,13 @@ void desenhaRodaGigante(){
   glPopMatrix();
 
   glColor3f(0.55f, 0.27f, 0.07f);
-  
+
   glPushMatrix();
   glTranslatef(-4, 1, 7);
   glRotatef(90, 1, 0, 0);
   gluDisk(base, 0, 0.6, 50, 25);
   glPopMatrix();
-  
+
   glPushMatrix();
   glTranslatef(-4, -3, 7);
   glRotatef(90, 1, 0, 0);
@@ -308,20 +308,19 @@ void desenhaRodaGigante(){
   glPopMatrix();
 
 
-  
+
   for(int i = 0; i < 360; i += 45) desenhaPau(i, rotacao_roda, -3);
   for(int i = 0; i < 360; i += 45) desenhaPau(i, rotacao_roda, 1);
- 
+
   for(int i = 0; i < 360; i += 45) desenhaPau2(i, grau_roda);
 
   for(int i = 0; i < 360; i += 45) desenhaPau3(i, grau_roda, rotacao_roda, -3);
   for(int i = 0; i < 360; i += 45) desenhaPau3(i, grau_roda, rotacao_roda, 1);
-  
+
   for(int i = 0; i < 360; i += 45) desenhaCadeira(i, grau_roda);
   grau_roda += 0.01745;
   rotacao_roda += 1;
 }
-
 
 void desenhaRobo(){
   //printf("%d %d %c\n", count, grau, points[iPoint].nextdir);
@@ -331,7 +330,7 @@ void desenhaRobo(){
 
 	//Cabeca
   glPushMatrix();
-  glRotatef(hRotate += 0.5, 0.0, 0.0, 1.0);
+  //glRotatef(hRotate += 0.5, 0.0, 0.0, 1.0);
   glScalef(0.3, 0.3, 0.25);
   glColor3f(0.41f, 0.41f, 0.41f);
   glTranslatef(0, 0, 5);
@@ -342,7 +341,7 @@ void desenhaRobo(){
 	GLUquadricObj * eyes = quadric();
   //Olho esquerdo
   glPushMatrix();
-  glRotatef(hRotate, -0.05, 0, 50);
+  //glRotatef(hRotate, -0.05, 0, 50);
 	//Exterior
 	glColor3f(1, 1, 1);
   glTranslatef(0.151, 0.08, 1.3);
@@ -356,7 +355,7 @@ void desenhaRobo(){
 
   //Olho direito
   glPushMatrix();
-  glRotatef(hRotate, -0.05, 0, 50);
+  //glRotatef(hRotate, -0.05, 0, 50);
 	//Exterior
 	glColor3f(1, 1, 1);
   glTranslatef(0.151, -0.08, 1.3);
@@ -370,12 +369,13 @@ void desenhaRobo(){
 
   //Boca
   glPushMatrix();
-  glRotatef(hRotate+=1, -0.05, 0, 4);
-  glColor3f(1, 0.98, 0.98);
-  glTranslatef(0.135, 0.0, 1.2);
-  glRotatef(90, 0, 1, 0);
-  glScalef(0.04, 0.14, 0.001);
-  desenhaCuboRobo();
+  //glRotatef(hRotate+=1, -0.05, 0, 4);
+	glColor3f(1, 0.27, 0);
+	glTranslatef(0.25, 0, 1.2);
+  glRotatef(90, 0, -1, 0);
+  //glScalef(0.04, 0.14, 0.001);
+	gluCylinder(eyes, 0.055, 0.03, 0.25, 50, 50);
+	//desenhaCuboRobo();
   glPopMatrix();
 
   //Pescoco
@@ -394,19 +394,37 @@ void desenhaRobo(){
   desenhaCuboRobo();
   glPopMatrix();
 
-	//Braco esquerdo
+	//Antebraco esquerdo
   glPushMatrix();
-  glScalef(0.1, 0.1, 0.5);
+	glScalef(0.1, 0.1, 0.3);
   glColor3f(1, 0.27, 0);
-  glTranslatef(0, 3, 1.3);
+  glTranslatef(0, 3, 2.6);
   desenhaCuboRobo();
   glPopMatrix();
 
-  //Braco direito
+  //Antebraco direito
   glPushMatrix();
-  glScalef(0.1, 0.1, 0.5);
+  glScalef(0.1, 0.1, 0.3);
   glColor3f(1, 0.27, 0);
-  glTranslatef(0, -3, 1.3);
+  glTranslatef(0, -3, 2.6);
+  desenhaCuboRobo();
+  glPopMatrix();
+
+	//braco esquerdo
+  glPushMatrix();
+	glRotatef(90, 0, 1, 0);
+	glScalef(0.1, 0.1, 0.5);
+  glColor3f(1, 0.27, 0);
+  glTranslatef(-6, -3, 0.4);
+  desenhaCuboRobo();
+  glPopMatrix();
+
+	//braco direito
+  glPushMatrix();
+	glRotatef(90, 0, 1, 0);
+	glScalef(0.1, 0.1, 0.5);
+  glColor3f(1, 0.27, 0);
+  glTranslatef(-6, 3, 0.4);
   desenhaCuboRobo();
   glPopMatrix();
 
@@ -469,8 +487,28 @@ void desenhaRobo(){
   //glScalef(0.01, 0.1, 0.5);
 	glColor3f(1, 0.27, 0);
   glTranslatef(0, 0, -0.29);
-	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
+	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 50);
   glPopMatrix();
+
+	/*
+	//Antena1
+  glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(1, 0.27, 0);
+  glTranslatef(0, 1.3, 0.1);
+	gluCylinder(eyes, 0.08, 0.03, 0.3, 50, 50);
+  glPopMatrix();
+
+	//Antena2
+  glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(1, 0.27, 0);
+  glTranslatef(0, 1.3, -0.57);
+	gluCylinder(eyes, 0.08, 0.03, 0.3, 50, 1);
+  glPopMatrix();
+	*/
 
   //Roda
   glPushMatrix();
@@ -537,7 +575,7 @@ void desenhaObjetos(void) {
   GLUquadricObj * eyes = quadric();
   gluDisk(eyes, 0, 0.02, 25, 1);
   glPopMatrix();
-  
+
   //Olho direito
   glPushMatrix();
   glRotatef(90, 0, 0, 1);
@@ -692,7 +730,7 @@ void desenha(void) {
   else if(look == 3) gluLookAt(-40.0, -4.0, 12.0, 0.0, 0.0, 5.0, 0.0, 0.0, 1.0);
   else if(look == 4) gluLookAt(-6.0, 0.0, 2.0, 0.0, -7.0, -2.0, 0.0, 0.0, 1.0);
   else if(look == 5) gluLookAt( -1.0, 3.0, 5.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0);
-  
+
     //INICIO DO CHAO
   glPushMatrix();
   //Desenhar o chao;
