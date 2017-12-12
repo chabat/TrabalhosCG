@@ -8,8 +8,13 @@ typedef struct{
   char nextdir;
 }point_t;
 
+
+GLdouble rotacao_roda = 0;
+GLdouble grau_roda = 0;
+GLdouble base_grau_roda = 0.01745;
+
 point_t points[30];
-int looktop = 0, iPoint = 0, grau = 0, count = 0, rotation = 0;
+int looktop = 1, iPoint = 0, grau = 0, count = 0, rotation = 0;
 double robox = 5, roboy = -2;
 GLdouble rotatextop = 0;
 GLdouble rotateytop = 0;
