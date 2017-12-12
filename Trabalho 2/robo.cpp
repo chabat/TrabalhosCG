@@ -6,6 +6,7 @@ GLdouble base_grau_roda = 0.01745;
 
 point_t points[30];
 int look = 0, iPoint = 0, grau = 0, count = 0, rotation = 0;
+point_t points[30];
 double robox = 5, roboy = -2;
 GLdouble rotatextop = 0;
 GLdouble rotateytop = 0;
@@ -290,8 +291,17 @@ void desenhaRodaGigante(){
   glPushMatrix();
   glTranslatef(-4, 1, 7);
   glRotatef(90, 1, 0, 0);
+<<<<<<< HEAD
   gluCylinder(base, 0.6, 0.6, 4, 50, 25);
   glPopMatrix();
+=======
+  gluCylinder(base, 0.6, 0.6, 3, 50, 25);
+
+  glPopMatrix();
+
+}
+
+>>>>>>> cf391daa3fe63d1f2facb818f98a6966b0081a18
 
   glColor3f(0.55f, 0.27f, 0.07f);
 
@@ -720,6 +730,7 @@ void desenha(void) {
     }
   }
 
+<<<<<<< HEAD
   if(look <= 1){
     printf("%lf %lf %lf\n", rotatextop, rotateytop, rotateztop);
     gluLookAt(rotatextop, rotateytop, rotateztop, 0, 0, 0, 0, 1, 0);
@@ -731,6 +742,13 @@ void desenha(void) {
   else if(look == 4) gluLookAt(-6.0, 0.0, 2.0, 0.0, -7.0, -2.0, 0.0, 0.0, 1.0);
   else if(look == 5) gluLookAt( -1.0, 3.0, 5.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0);
 
+=======
+  if(looktop)
+    gluLookAt(rotatextop, rotateytop, rotateztop, 0, 0, 0, 0, 1, 0);
+  else{
+    gluLookAt(robox-(MAXLAB/2)+xAdjust, roboy-(MAXLAB/2)+yAdjust, 3, robox-(MAXLAB/2), roboy-(MAXLAB/2), centerzthird, 0, 0, 1);
+  }
+>>>>>>> cf391daa3fe63d1f2facb818f98a6966b0081a18
     //INICIO DO CHAO
   glPushMatrix();
   //Desenhar o chao;
@@ -746,6 +764,7 @@ void desenha(void) {
   glPopMatrix();
   //FIM DO CHAO
 
+<<<<<<< HEAD
   desenhaParede();
 
 	glPushMatrix();
@@ -762,6 +781,24 @@ void desenha(void) {
   glTranslatef(robox - MAXLAB/2, roboy - MAXLAB / 2, 0);
   glScalef(1, 1, 1);
   glRotatef(90, 0, 0, 1);
+=======
+  //desenhaParede();
+
+	glPushMatrix();
+  // robox += speedx; roboy += speedy;
+  // if((int)robox == points[iPoint].x || (int)roboy == points[iPoint].y){
+  //   speedx = points[iPoint].speedx;
+  //   speedy = points[iPoint].speedy;
+  //   if(points[iPoint].nextdir == 'D'){ count = 9; rotation = -ROBOTURN; }
+  //   else if(points[iPoint].nextdir == 'E'){ count = 9; rotation = ROBOTURN; }
+  //   else if(points[iPoint].nextdir == 'A'){ count = 18; rotation = ROBOTURN; }
+  //   if(iPoint < 29) iPoint++;
+  //   if(iPoint == 5) iPoint++;
+  // }
+  // glTranslatef(robox - MAXLAB/2, roboy - MAXLAB / 2, 0);
+  // glScalef(1, 1, 1);
+  // glRotatef(90, 0, 0, 1);
+>>>>>>> cf391daa3fe63d1f2facb818f98a6966b0081a18
   desenhaRobo();
   glPopMatrix();
   desenhaObjetos();

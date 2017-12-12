@@ -5,7 +5,7 @@
 #include <math.h>
 
 #define MAXLAB 30
-#define SPEED 0.05;
+#define SPEED 0.10;
 #define INF 112345
 
 typedef struct{
@@ -333,7 +333,7 @@ void desenhaParede(void) {
   }
 }
 
-void desenhaObjetos(void) {
+/*void desenhaObjetos(void) {
   glTranslatef(10 - (MAXLAB/2), 12 - (MAXLAB/2), 0.3);
   //Cabeca
   glPushMatrix();
@@ -457,7 +457,7 @@ void desenhaObjetos(void) {
   glTranslatef(2, 0, 1.37);
   gluDisk(water, 0, 0.1, 25, 1);
   glPopMatrix();
-}
+}*/
 
 
 void desenha(void) {
@@ -534,7 +534,7 @@ void desenha(void) {
   glRotatef(90, 0, 0, 1);
   desenhaRobo();
   glPopMatrix();
-  desenhaObjetos();
+  //desenhaObjetos();
   glutSwapBuffers();
   glFlush();
 }
@@ -567,7 +567,7 @@ int main(int argc, char **argv) {
   glutInitWindowSize(1366, 768);
   glutCreateWindow ("Labirinto");
   glutKeyboardFunc(getViewPos);
-  glutTimerFunc(50,Redesenha,1);
+  glutTimerFunc(60,Redesenha,1);
   glutDisplayFunc(desenha);
   glutReshapeFunc(AlteraTamanhoJanela);
   Inicializa();
