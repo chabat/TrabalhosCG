@@ -1,7 +1,12 @@
 #include "robo.h"
 
+GLdouble rotacao_roda = 0;
+GLdouble grau_roda = 0;
+GLdouble base_grau_roda = 0.01745;
+
 point_t points[30];
-int looktop = 0, iPoint = 0, grau = 0, count = 0, rotation = 0;
+int look = 0, iPoint = 0, grau = 0, count = 0, rotation = 0;
+point_t points[30];
 double robox = 5, roboy = -2;
 GLdouble rotatextop = 0;
 GLdouble rotateytop = 0;
@@ -112,7 +117,7 @@ GLUquadricObj *quadric(void){
 
 //Captura comandos do teclado
 void getViewPos(unsigned char key, int x, int y){
-  if(looktop){
+  if(look){
     if(key == '+') rotateztop -= 1;
     if(key == '-') rotateztop += 1;
     if(key == '8') rotateytop += 1;
@@ -128,7 +133,11 @@ void getViewPos(unsigned char key, int x, int y){
     if(key == '4') rotatexthird -= 1;
     if(key == '6') rotatexthird += 1;
   }
-  if(key == '0') looktop = looktop ? 0 : 1;
+  if(key == 'q') look = 1;
+  if(key == 'w') look = 2;
+  if(key == 'e') look = 3;
+  if(key == 'r') look = 4;
+  if(key == 't') look = 5;
 }
 
 //Função para desenhar o cubo.
@@ -202,8 +211,55 @@ void desenhaCuboRobo() {
   glEnd();
 }
 
+void desenhaPau(int angulo, int rotacao_roda, int y){
+  GLUquadricObj * base = quadric();
+  glPushMatrix();
+  glTranslatef(-4, y, 7);
+  glRotatef(angulo, 0, 1, 0);
+  glRotatef(rotacao_roda, 0, 1, 0);
+  gluCylinder(base, 0.1, 0.1, 6, 50, 25);
+  glPopMatrix();
+}
+
+void desenhaPau2(int i, GLdouble grau_roda){
+  GLUquadricObj * base = quadric();
+  glPushMatrix();
+  glRotatef(90, 1, 0, 0);
+  glTranslatef(-4 + sin(grau_roda+i*base_grau_roda)*5.9, 7 + cos(grau_roda+i*base_grau_roda)*5.9, -1);
+  gluCylinder(base, 0.1, 0.1, 4, 50, 25);
+  glPopMatrix();
+}
+
+void desenhaPau3(int i, GLdouble grau_roda, int rotacao_roda, int y){
+  GLUquadricObj * base = quadric();
+  glPushMatrix();
+  glTranslatef(-4 + sin(grau_roda + i * base_grau_roda) * 5.9, y, 7 + cos(grau_roda + i * base_grau_roda)*5.9);
+  glRotatef(rotacao_roda, 0, 1, 0);
+  glRotatef(113 + i, 0, 1, 0);
+  gluCylinder(base, 0.1, 0.1, 4.6, 50, 25);
+  glPopMatrix();
+}
+
+void desenhaCadeira(int i, GLdouble grau_roda){
+
+  glPushMatrix();
+  glColor3f(0.41f, 0.41f, 0.41f);
+  glTranslatef(-4 + sin(grau_roda + i * base_grau_roda) * 5.9, -1, 6.75 + cos(grau_roda + i * base_grau_roda) * 5.9);
+  glScalef(0.1, 0.75, 0.5);
+  desenhaCuboRobo();
+  //gluCylinder(base, 0.1, 0.1, 6, 50, 25);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(-3.75 + sin(grau_roda + i * base_grau_roda) * 5.9, -1, 6.5 + cos(grau_roda + i * base_grau_roda) * 5.9);
+  glScalef(0.5, 0.5, 0.1);
+  desenhaCuboRobo();
+  glPopMatrix();
+}
 void desenhaRodaGigante(){
-  glColor3f(0.66f, 0.66f, 0.66f);
+  glTranslatef(-20, 0, 0);
+  glRotatef(90, 0, 0, 1);
+  glColor3f(0.43f, 0.21f, 0.01f);
   glPushMatrix();
   glTranslatef(0, 0, 3.3);
   glRotatef(45, 0, 1, 0);
@@ -231,17 +287,50 @@ void desenhaRodaGigante(){
   //gluCylinder(base, 0.25, 0.25, 2, 50, 25);
   glPopMatrix();
 
-  glPushMatrix();
   GLUquadricObj * base = quadric();
-  glTranslatef(-4, 0.5, 7);
+  glPushMatrix();
+  glTranslatef(-4, 1, 7);
   glRotatef(90, 1, 0, 0);
+<<<<<<< HEAD
+  gluCylinder(base, 0.6, 0.6, 4, 50, 25);
+  glPopMatrix();
+=======
   gluCylinder(base, 0.6, 0.6, 3, 50, 25);
 
   glPopMatrix();
 
 }
 
+>>>>>>> cf391daa3fe63d1f2facb818f98a6966b0081a18
 
+  glColor3f(0.55f, 0.27f, 0.07f);
+
+  glPushMatrix();
+  glTranslatef(-4, 1, 7);
+  glRotatef(90, 1, 0, 0);
+  gluDisk(base, 0, 0.6, 50, 25);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(-4, -3, 7);
+  glRotatef(90, 1, 0, 0);
+  gluDisk(base, 0, 0.6, 50, 25);
+  glPopMatrix();
+
+
+
+  for(int i = 0; i < 360; i += 45) desenhaPau(i, rotacao_roda, -3);
+  for(int i = 0; i < 360; i += 45) desenhaPau(i, rotacao_roda, 1);
+
+  for(int i = 0; i < 360; i += 45) desenhaPau2(i, grau_roda);
+
+  for(int i = 0; i < 360; i += 45) desenhaPau3(i, grau_roda, rotacao_roda, -3);
+  for(int i = 0; i < 360; i += 45) desenhaPau3(i, grau_roda, rotacao_roda, 1);
+
+  for(int i = 0; i < 360; i += 45) desenhaCadeira(i, grau_roda);
+  grau_roda += 0.01745;
+  rotacao_roda += 1;
+}
 
 void desenhaRobo(){
   //printf("%d %d %c\n", count, grau, points[iPoint].nextdir);
@@ -480,6 +569,7 @@ void desenhaObjetos(void) {
   glTranslatef(10 - (MAXLAB/2), 12 - (MAXLAB/2), 0.3);
   //Cabeca
   glPushMatrix();
+  glRotatef(90, 0, 0, 1);
   glScalef(0.3, 0.3, 0.25);
   glColor3f(0.72f, 0.25f, 0.05f);
   glTranslatef(0, 0, 3);
@@ -488,6 +578,7 @@ void desenhaObjetos(void) {
 
   //Olho esquerdo
   glPushMatrix();
+  glRotatef(90, 0, 0, 1);
   glColor3f(0, 0, 0);
   glTranslatef(0.151, 0.05, 0.85);
   glRotatef(90, 0, 1, 0);
@@ -497,16 +588,18 @@ void desenhaObjetos(void) {
 
   //Olho direito
   glPushMatrix();
+  glRotatef(90, 0, 0, 1);
+  glRotatef(90, 0, 1, 0);
   glColor3f(0, 0, 0);
   glTranslatef(0.151, -0.05, 0.85);
-  glRotatef(90, 0, 1, 0);
   gluDisk(eyes, 0, 0.02, 25, 1);
   glPopMatrix();
 
   //Boca
   glPushMatrix();
+  glRotatef(90, 0, 0, 1);
   glColor3f(0, 0, 0);
-  glTranslatef(0.1, 0, 0.75);
+  glTranslatef(0.11, 0, 0.75);
   glRotatef(90, 0, 1, 0);
   glScalef(0.08, 0.15, 0.1);
   desenhaCuboRobo();
@@ -637,26 +730,58 @@ void desenha(void) {
     }
   }
 
+<<<<<<< HEAD
+  if(look <= 1){
+    printf("%lf %lf %lf\n", rotatextop, rotateytop, rotateztop);
+    gluLookAt(rotatextop, rotateytop, rotateztop, 0, 0, 0, 0, 1, 0);
+  }
+  else if(look == 2){
+    gluLookAt(robox-(MAXLAB/2)+xAdjust, roboy-(MAXLAB/2)+yAdjust, 3, robox-(MAXLAB/2), roboy-(MAXLAB/2), centerzthird, 0, 0, 1);
+  }
+  else if(look == 3) gluLookAt(-40.0, -4.0, 12.0, 0.0, 0.0, 5.0, 0.0, 0.0, 1.0);
+  else if(look == 4) gluLookAt(-6.0, 0.0, 2.0, 0.0, -7.0, -2.0, 0.0, 0.0, 1.0);
+  else if(look == 5) gluLookAt( -1.0, 3.0, 5.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+
+=======
   if(looktop)
     gluLookAt(rotatextop, rotateytop, rotateztop, 0, 0, 0, 0, 1, 0);
   else{
     gluLookAt(robox-(MAXLAB/2)+xAdjust, roboy-(MAXLAB/2)+yAdjust, 3, robox-(MAXLAB/2), roboy-(MAXLAB/2), centerzthird, 0, 0, 1);
   }
+>>>>>>> cf391daa3fe63d1f2facb818f98a6966b0081a18
     //INICIO DO CHAO
   glPushMatrix();
   //Desenhar o chao;
   glColor3f(0, 0.39, 0);
   glBegin(GL_QUADS);
-  glVertex3f(-MAXLAB/2, -MAXLAB/2 - 3, -0.001);
-  glVertex3f(MAXLAB/2, -MAXLAB/2 - 3, -0.001);
-  glVertex3f(MAXLAB/2, MAXLAB/2 + 3, -0.001);
-  glVertex3f(-MAXLAB/2, MAXLAB/2 + 3, -0.001);
+  glVertex3f(-2*MAXLAB/2, -2*MAXLAB/2 - 3, -0.001);
+  glVertex3f(2*MAXLAB/2, -2*MAXLAB/2 - 3, -0.001);
+  glVertex3f(2*MAXLAB/2, 2*MAXLAB/2 + 3, -0.001);
+  glVertex3f(-2*MAXLAB/2, 2*MAXLAB/2 + 3, -0.001);
   glEnd();
 
 
   glPopMatrix();
   //FIM DO CHAO
 
+<<<<<<< HEAD
+  desenhaParede();
+
+	glPushMatrix();
+  robox += speedx; roboy += speedy;
+  if((int)robox == points[iPoint].x || (int)roboy == points[iPoint].y){
+    speedx = points[iPoint].speedx;
+    speedy = points[iPoint].speedy;
+    if(points[iPoint].nextdir == 'D'){ count = 9; rotation = -ROBOTURN; }
+    else if(points[iPoint].nextdir == 'E'){ count = 9; rotation = ROBOTURN; }
+    else if(points[iPoint].nextdir == 'A'){ count = 18; rotation = ROBOTURN; }
+    if(iPoint < 29) iPoint++;
+    if(iPoint == 5) iPoint++;
+  }
+  glTranslatef(robox - MAXLAB/2, roboy - MAXLAB / 2, 0);
+  glScalef(1, 1, 1);
+  glRotatef(90, 0, 0, 1);
+=======
   //desenhaParede();
 
 	glPushMatrix();
@@ -673,10 +798,11 @@ void desenha(void) {
   // glTranslatef(robox - MAXLAB/2, roboy - MAXLAB / 2, 0);
   // glScalef(1, 1, 1);
   // glRotatef(90, 0, 0, 1);
+>>>>>>> cf391daa3fe63d1f2facb818f98a6966b0081a18
   desenhaRobo();
   glPopMatrix();
   desenhaObjetos();
-  //desenhaRodaGigante();
+  desenhaRodaGigante();
   glutSwapBuffers();
   glFlush();
 }
