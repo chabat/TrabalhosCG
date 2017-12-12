@@ -1,3 +1,3 @@
 #!/bin/bash
-make
+g++ main.cpp robo.cpp -o robo -Wall -lGL -lglut -lGLU
 ./robo

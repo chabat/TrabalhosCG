@@ -1,11 +1,67 @@
-//AUTORES: Felipe Chabatura e Leonardo Tironi;
-#include <stdio.h>
-#include <string.h>
-#include <GL/glut.h>
-#include <math.h>
 #include "robo.h"
 
-// Inicializa par?metros de rendering
+point_t points[30];
+int looktop = 0, iPoint = 0, grau = 0, count = 0, rotation = 0;
+double robox = 5, roboy = -2;
+GLdouble rotatextop = 0;
+GLdouble rotateytop = 0;
+GLdouble rotateztop = 46;
+
+GLdouble centerxthird = 0;
+GLdouble centerythird = 1;
+GLdouble centerzthird = 0;
+
+GLdouble rotatexthird = 0;
+GLdouble rotateythird = 0;
+GLdouble rotatezthird = 46;
+
+GLfloat PI = 3.141592; // Valor de PI.
+GLfloat x, y, z, alpha, beta; // Variáveis para coordenadas e ângulos.
+GLfloat radius = 0.3;
+GLfloat hRotate = 0;
+int gradation = 50; // Quantidade de fatias.
+GLfloat move = PI/gradation;
+GLfloat speedx = 0;
+GLfloat speedy = SPEED;
+GLdouble xAdjust = 0;
+GLdouble yAdjust = -2;
+
+//Matriz do Labirinto
+int labirinto[MAXLAB][MAXLAB] = {
+// 0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
+  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //0
+  {1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1}, //1
+  {1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1}, //2
+  {1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1}, //3
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1}, //4
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1}, //5
+  {1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1}, //6
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1}, //7
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1}, //8
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1}, //9
+  {1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1}, //0
+  {1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1}, //1
+  {1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1}, //2
+  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1}, //3
+  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1}, //4
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1}, //5
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1}, //6
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1}, //7
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1}, //8
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1}, //9
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1}, //0
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1}, //1
+  {1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1}, //2
+  {1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1}, //3
+  {1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1}, //4
+  {1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1}, //5
+  {1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1}, //6
+  {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0}, //7
+  {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0}, //8
+  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}  //9
+};
+
+// Inicializa parametros de rendering
 void Inicializa(void) {
 	// Define a cor de fundo da janela de visualização como preta
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -44,6 +100,7 @@ void Inicializa(void) {
 
 }
 
+//Desenha quadrica
 GLUquadricObj *quadric(void){
   GLUquadricObj *obj = gluNewQuadric();
   gluQuadricDrawStyle(obj, GLU_FILL);
@@ -52,6 +109,8 @@ GLUquadricObj *quadric(void){
   return obj;
 }
 
+
+//Captura comandos do teclado
 void getViewPos(unsigned char key, int x, int y){
   if(looktop){
     if(key == '+') rotateztop -= 1;
@@ -87,11 +146,11 @@ void desenhaCubo(int posi, int posj) {
   };
   GLfloat cores[7][3] = {
     {0.2, 0.8, 0.2},   //"Cima"
-    {0.13, 0.55, 0.13},      //"esquerda"
+    {0.13, 0.55, 0.13},    //"esquerda"
     {0.13, 0.55, 0.13},   //"Embaixo"
     {0.13, 0.55, 0.13},   //"Direita"
     {0.13, 0.55, 0.13},   //"Atras"
-    {0.13, 0.55, 0.13},    //"frente"MAXLAB
+    {0.13, 0.55, 0.13},   //"frente"MAXLAB
     {1, 0, 0}
   };
   int cr[24] = {
@@ -177,11 +236,11 @@ void desenhaRodaGigante(){
   glTranslatef(-4, 0.5, 7);
   glRotatef(90, 1, 0, 0);
   gluCylinder(base, 0.6, 0.6, 3, 50, 25);
-  
+
   glPopMatrix();
-  
+
 }
-	       
+
 
 
 void desenhaRobo(){
@@ -189,41 +248,53 @@ void desenhaRobo(){
   if(count){grau += rotation; count--;}
   glRotatef(grau, 0, 0, 1);
   glTranslatef(0, 0, 0.3);
-  //Cabeca
+
+	//Cabeca
   glPushMatrix();
   glRotatef(hRotate += 0.5, 0.0, 0.0, 1.0);
   glScalef(0.3, 0.3, 0.25);
   glColor3f(0.41f, 0.41f, 0.41f);
-  glTranslatef(0, 0, 3);
+  glTranslatef(0, 0, 5);
   desenhaCuboRobo();
   glPopMatrix();
 
+	//OLHOS
+	GLUquadricObj * eyes = quadric();
   //Olho esquerdo
   glPushMatrix();
   glRotatef(hRotate, -0.05, 0, 50);
-  glColor3f(0, 0, 0);
-  glTranslatef(0.151, 0.05, 0.85);
+	//Exterior
+	glColor3f(1, 1, 1);
+  glTranslatef(0.151, 0.08, 1.3);
   glRotatef(90, 0, 1, 0);
-  GLUquadricObj * eyes = quadric();
-  gluDisk(eyes, 0, 0.02, 25, 1);
+  gluDisk(eyes, 0, 0.04, 25, 1);
+	//Interior
+	glTranslatef(0.0, 0.0, 0.001);
+	glColor3f(1, 0.27, 0);
+	gluDisk(eyes, 0, 0.02, 25, 1);
   glPopMatrix();
 
   //Olho direito
   glPushMatrix();
   glRotatef(hRotate, -0.05, 0, 50);
-  glColor3f(0, 0, 0);
-  glTranslatef(0.151, -0.05, 0.85);
+	//Exterior
+	glColor3f(1, 1, 1);
+  glTranslatef(0.151, -0.08, 1.3);
   glRotatef(90, 0, 1, 0);
-  gluDisk(eyes, 0, 0.02, 25, 1);
+  gluDisk(eyes, 0, 0.04, 25, 1);
+	//Interior
+	glTranslatef(0.0, 0.0, 0.001);
+	glColor3f(1, 0.27, 0);
+	gluDisk(eyes, 0, 0.02, 25, 1);
   glPopMatrix();
 
   //Boca
   glPushMatrix();
   glRotatef(hRotate+=1, -0.05, 0, 4);
-  glColor3f(0, 0, 0);
-  glTranslatef(0.1, 0, 0.75);
+  glColor3f(1, 0.98, 0.98);
+  glTranslatef(0.135, 0.0, 1.2);
   glRotatef(90, 0, 1, 0);
-  glScalef(0.08, 0.15, 0.1);
+  glScalef(0.04, 0.14, 0.001);
   desenhaCuboRobo();
   glPopMatrix();
 
@@ -231,7 +302,7 @@ void desenhaRobo(){
   glPushMatrix();
   glScalef(0.1, 0.1, 0.3);
   glColor3f(0.41f, 0.41f, 0.41f);
-  glTranslatef(0, 0.1, 1.6);
+  glTranslatef(0, 0.1, 3.5);
   desenhaCuboRobo();
   glPopMatrix();
 
@@ -239,24 +310,86 @@ void desenhaRobo(){
   glPushMatrix();
   glScalef(0.5, 0.5, 0.5);
   glColor3f(0.41f, 0.41f, 0.41f);
-  glTranslatef(0, 0, 0.35);
+  glTranslatef(0, 0, 1.5);
   desenhaCuboRobo();
   glPopMatrix();
 
-  //Braco esquerdo
+	//Braco esquerdo
   glPushMatrix();
   glScalef(0.1, 0.1, 0.5);
-  glColor3f(0.7f, 0.13f, 0.13f);
-  glTranslatef(0, 3, 0.3);
+  glColor3f(1, 0.27, 0);
+  glTranslatef(0, 3, 1.3);
   desenhaCuboRobo();
   glPopMatrix();
 
   //Braco direito
   glPushMatrix();
   glScalef(0.1, 0.1, 0.5);
-  glColor3f(0.7f, 0.13f, 0.13f);
-  glTranslatef(0, -3, 0.3);
+  glColor3f(1, 0.27, 0);
+  glTranslatef(0, -3, 1.3);
   desenhaCuboRobo();
+  glPopMatrix();
+
+  //Apoio de roda esquerdo
+  glPushMatrix();
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(0.41f, 0.41f, 0.41f);
+  glTranslatef(0, 0.2, 0);
+	gluCylinder(eyes, 0.03, 0.03, 0.5, 50, 1);
+  glPopMatrix();
+
+  //Apoio de roda direito
+  glPushMatrix();
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(0.41f, 0.41f, 0.41f);
+  glTranslatef(0, -0.2, 0);
+	gluCylinder(eyes, 0.03, 0.03, 0.5, 50, 1);
+  glPopMatrix();
+
+	//Ligação entre os apoios
+  glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(0.41f, 0.41f, 0.41f);
+  glTranslatef(0, 0, -0.225);
+	gluCylinder(eyes, 0.03, 0.03, 0.45, 50, 1);
+  glPopMatrix();
+
+	//Aro 1
+  glPushMatrix();
+	glColor3f(1, 0.27, 0);
+	glRotatef(180, 1, 0, 0);
+	glRotatef(62*move, 0, -1, 0);
+  //glScalef(0.01, 0.1, 0.5);
+  glTranslatef(0, 0, -0.29);
+	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
+  glPopMatrix();
+	//Aro 2
+  glPushMatrix();
+	glRotatef(180, 1, 0, 0);
+	glRotatef(62*move, 0, -1, 0);
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(1, 0.27, 0);
+  glTranslatef(0, 0, -0.05);
+	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
+  glPopMatrix();
+	//Aro 3
+  glPushMatrix();
+	glRotatef(90, 0, 1, 0);
+	glRotatef(62*move, 0, 1, 0);
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(1, 0.27, 0);
+  glTranslatef(0, 0, -0.01);
+	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
+  glPopMatrix();
+	//Aro 4
+  glPushMatrix();
+	glRotatef(90, 0, 1, 0);
+	glRotatef(62*move, 0, 1, 0);
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(1, 0.27, 0);
+  glTranslatef(0, 0, -0.29);
+	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
   glPopMatrix();
 
   //Roda
@@ -268,9 +401,9 @@ void desenhaRobo(){
     glBegin(GL_TRIANGLE_STRIP);
     for (beta = 0.0+move; beta < 2.1 * PI + move; beta += PI/gradation) {
       if(beta <= PI + move && beta >= move)
-	glColor3f(0.8f, 0.47f, 0.13f);
+	glColor3f(0.47, 0.53, 0.6);
       else
-	glColor3f(0.73f, 0.33f, 0.83f);
+	glColor3f(0.44, 0.5, 0.56);
       x = radius*cos(beta)*sin(alpha);
       y = radius*sin(beta)*sin(alpha);
       z = radius*cos(alpha);
@@ -288,6 +421,7 @@ void desenhaRobo(){
   glPopMatrix();
 }
 
+//Desenha as paredes do labirinto
 void desenhaParede(void) {
   int i, j;
   for (i = 0; i < MAXLAB; i++) {
@@ -438,40 +572,37 @@ void desenha(void) {
 
   if(count){
     if(points[iPoint-1].nextdir == 'A')
-      if(robox-(MAXLAB/2) >= robox-(MAXLAB/2) + xAdjust) xAdjust += 0.111111111;
-      else if(robox-(MAXLAB/2) <= robox-(MAXLAB/2) + xAdjust) xAdjust +=  0.111111111;
-      else if(roboy-(MAXLAB/2) >= roboy-(MAXLAB/2) + yAdjust) yAdjust +=  0.111111111;
-      else yAdjust += 0.111111111;
+      if(robox-(MAXLAB/2) >= robox-(MAXLAB/2) + xAdjust) xAdjust += CAMTURN;
+      else if(robox-(MAXLAB/2) <= robox-(MAXLAB/2) + xAdjust) xAdjust +=  CAMTURN;
+      else if(roboy-(MAXLAB/2) >= roboy-(MAXLAB/2) + yAdjust) yAdjust +=  CAMTURN;
+      else yAdjust += CAMTURN;
     else if(speedy != 0){
       if(robox-(MAXLAB/2) >= robox-(MAXLAB/2) + xAdjust){
-	if(points[iPoint-1].nextdir == 'D'){ xAdjust += 0.111111111; yAdjust += 0.111111111;}
-	else if(points[iPoint-1].nextdir == 'E'){ xAdjust += 0.111111111; yAdjust -= 0.111111111;}
+	if(points[iPoint-1].nextdir == 'D'){ xAdjust += CAMTURN; yAdjust += CAMTURN;}
+	else if(points[iPoint-1].nextdir == 'E'){ xAdjust += CAMTURN; yAdjust -= CAMTURN;}
       }
       else{
-	if(points[iPoint-1].nextdir == 'D') { xAdjust -= 0.111111111; yAdjust -= 0.111111111;}
-	else if(points[iPoint-1].nextdir == 'E'){ xAdjust -= 0.111111111; yAdjust += 0.111111111;}
+	if(points[iPoint-1].nextdir == 'D') { xAdjust -= CAMTURN; yAdjust -= CAMTURN;}
+	else if(points[iPoint-1].nextdir == 'E'){ xAdjust -= CAMTURN; yAdjust += CAMTURN;}
       }
     }
     else if(speedx != 0){
       if(roboy-(MAXLAB/2) >= roboy-(MAXLAB/2) + yAdjust){;
-	if(points[iPoint-1].nextdir == 'D'){ yAdjust += 0.111111111; xAdjust -= 0.111111111; }
-	else if(points[iPoint-1].nextdir == 'E') { yAdjust += 0.111111111; xAdjust += 0.111111111; }
+	if(points[iPoint-1].nextdir == 'D'){ yAdjust += CAMTURN; xAdjust -= CAMTURN; }
+	else if(points[iPoint-1].nextdir == 'E') { yAdjust += CAMTURN; xAdjust += CAMTURN; }
       }
       else{
-	if(points[iPoint-1].nextdir == 'D'){ yAdjust -= 0.111111111; xAdjust += 0.111111111; }
-	else if(points[iPoint-1].nextdir == 'E') { yAdjust -= 0.111111111; xAdjust -= 0.111111111; }
+	if(points[iPoint-1].nextdir == 'D'){ yAdjust -= CAMTURN; xAdjust += CAMTURN; }
+	else if(points[iPoint-1].nextdir == 'E') { yAdjust -= CAMTURN; xAdjust -= CAMTURN; }
       }
     }
   }
-  
+
   if(looktop)
     gluLookAt(rotatextop, rotateytop, rotateztop, 0, 0, 0, 0, 1, 0);
   else{
-    //gluLookAt(robox-(MAXLAB/2), roboy-(MAXLAB/2)-3, 3, robox-(MAXLAB/2), roboy-(MAXLAB/2), centerzthird, 0, 1, 0); }
-    //printf("%lf %lf", robox-(MAXLAB/2)+xAdjust, roboy-(MAXLAB/2)+yAdjust);
     gluLookAt(robox-(MAXLAB/2)+xAdjust, roboy-(MAXLAB/2)+yAdjust, 3, robox-(MAXLAB/2), roboy-(MAXLAB/2), centerzthird, 0, 0, 1);
   }
-  //gluLookAt(rotateqtop)
     //INICIO DO CHAO
   glPushMatrix();
   //Desenhar o chao;
@@ -489,14 +620,14 @@ void desenha(void) {
 
   desenhaParede();
 
-  glPushMatrix();
+	glPushMatrix();
   robox += speedx; roboy += speedy;
   if((int)robox == points[iPoint].x || (int)roboy == points[iPoint].y){
     speedx = points[iPoint].speedx;
     speedy = points[iPoint].speedy;
-    if(points[iPoint].nextdir == 'D'){ count = 18; rotation = -5; }
-    else if(points[iPoint].nextdir == 'E'){ count = 18; rotation = 5; }
-    else if(points[iPoint].nextdir == 'A'){ count = 36; rotation = 5; }
+    if(points[iPoint].nextdir == 'D'){ count = 9; rotation = -ROBOTURN; }
+    else if(points[iPoint].nextdir == 'E'){ count = 9; rotation = ROBOTURN; }
+    else if(points[iPoint].nextdir == 'A'){ count = 18; rotation = ROBOTURN; }
     if(iPoint < 29) iPoint++;
     if(iPoint == 5) iPoint++;
   }
@@ -529,20 +660,4 @@ void AlteraTamanhoJanela(GLsizei w, GLsizei h) {
 	glLoadIdentity();
 
 	gluPerspective(45.0f, ((GLfloat)w / (GLfloat)h), 1.0f, 100.0f);
-}
-
-
-int main(int argc, char **argv) {
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-  glutInitWindowPosition(100,100);
-  glutInitWindowSize(1366, 768);
-  glutCreateWindow ("Labirinto");
-  glutKeyboardFunc(getViewPos);
-  glutTimerFunc(50,Redesenha,1);
-  glutDisplayFunc(desenha);
-  glutReshapeFunc(AlteraTamanhoJanela);
-  Inicializa();
-  glutMainLoop();
-  return 0;
 }
