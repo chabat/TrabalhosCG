@@ -172,6 +172,22 @@ void desenhaPau3(int i, GLdouble grau_roda, int rotacao_roda, int y){
   glPopMatrix();
 }
 
+void desenhaCadeira(int i, GLdouble grau_roda){
+
+  glPushMatrix();
+  glColor3f(0.41f, 0.41f, 0.41f);
+  glTranslatef(-4 + sin(grau_roda + i * base_grau_roda) * 5.9, -1, 6.75 + cos(grau_roda + i * base_grau_roda) * 5.9);
+  glScalef(0.1, 0.75, 0.5);
+  desenhaCuboRobo();
+  //gluCylinder(base, 0.1, 0.1, 6, 50, 25);
+  glPopMatrix();
+  
+  glPushMatrix();
+  glTranslatef(-3.75 + sin(grau_roda + i * base_grau_roda) * 5.9, -1, 6.5 + cos(grau_roda + i * base_grau_roda) * 5.9);
+  glScalef(0.5, 0.5, 0.1);
+  desenhaCuboRobo();
+  glPopMatrix();
+}
 void desenhaRodaGigante(){
   glColor3f(0.43f, 0.21f, 0.01f);
   glPushMatrix();
@@ -231,16 +247,8 @@ void desenhaRodaGigante(){
 
   for(int i = 0; i < 360; i += 45) desenhaPau3(i, grau_roda, rotacao_roda, -3);
   for(int i = 0; i < 360; i += 45) desenhaPau3(i, grau_roda, rotacao_roda, 1);
-
-  glPushMatrix();
-  glColor3f(0.41f, 0.41f, 0.41f);
-  glTranslatef(-4, 0.5, 7);
-  glRotatef(rotacao_roda, 0, 1, 0);
-  glScalef(0.5, 0.5, 0.1);
-  desenhaCuboRobo();
-  //gluCylinder(base, 0.1, 0.1, 6, 50, 25);
-  glPopMatrix();
   
+  for(int i = 0; i < 360; i += 45) desenhaCadeira(i, grau_roda);
   grau_roda += 0.01745;
   rotacao_roda += 1;
 }
