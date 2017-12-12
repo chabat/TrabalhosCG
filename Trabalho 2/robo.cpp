@@ -251,7 +251,7 @@ void desenhaRobo(){
 
 	//Cabeca
   glPushMatrix();
-  glRotatef(hRotate += 0.5, 0.0, 0.0, 1.0);
+  //glRotatef(hRotate += 0.5, 0.0, 0.0, 1.0);
   glScalef(0.3, 0.3, 0.25);
   glColor3f(0.41f, 0.41f, 0.41f);
   glTranslatef(0, 0, 5);
@@ -262,7 +262,7 @@ void desenhaRobo(){
 	GLUquadricObj * eyes = quadric();
   //Olho esquerdo
   glPushMatrix();
-  glRotatef(hRotate, -0.05, 0, 50);
+  //glRotatef(hRotate, -0.05, 0, 50);
 	//Exterior
 	glColor3f(1, 1, 1);
   glTranslatef(0.151, 0.08, 1.3);
@@ -276,7 +276,7 @@ void desenhaRobo(){
 
   //Olho direito
   glPushMatrix();
-  glRotatef(hRotate, -0.05, 0, 50);
+  //glRotatef(hRotate, -0.05, 0, 50);
 	//Exterior
 	glColor3f(1, 1, 1);
   glTranslatef(0.151, -0.08, 1.3);
@@ -290,12 +290,13 @@ void desenhaRobo(){
 
   //Boca
   glPushMatrix();
-  glRotatef(hRotate+=1, -0.05, 0, 4);
-  glColor3f(1, 0.98, 0.98);
-  glTranslatef(0.135, 0.0, 1.2);
-  glRotatef(90, 0, 1, 0);
-  glScalef(0.04, 0.14, 0.001);
-  desenhaCuboRobo();
+  //glRotatef(hRotate+=1, -0.05, 0, 4);
+	glColor3f(1, 0.27, 0);
+	glTranslatef(0.25, 0, 1.2);
+  glRotatef(90, 0, -1, 0);
+  //glScalef(0.04, 0.14, 0.001);
+	gluCylinder(eyes, 0.055, 0.03, 0.25, 50, 50);
+	//desenhaCuboRobo();
   glPopMatrix();
 
   //Pescoco
@@ -314,19 +315,37 @@ void desenhaRobo(){
   desenhaCuboRobo();
   glPopMatrix();
 
-	//Braco esquerdo
+	//Antebraco esquerdo
   glPushMatrix();
-  glScalef(0.1, 0.1, 0.5);
+	glScalef(0.1, 0.1, 0.3);
   glColor3f(1, 0.27, 0);
-  glTranslatef(0, 3, 1.3);
+  glTranslatef(0, 3, 2.6);
   desenhaCuboRobo();
   glPopMatrix();
 
-  //Braco direito
+  //Antebraco direito
   glPushMatrix();
-  glScalef(0.1, 0.1, 0.5);
+  glScalef(0.1, 0.1, 0.3);
   glColor3f(1, 0.27, 0);
-  glTranslatef(0, -3, 1.3);
+  glTranslatef(0, -3, 2.6);
+  desenhaCuboRobo();
+  glPopMatrix();
+
+	//braco esquerdo
+  glPushMatrix();
+	glRotatef(90, 0, 1, 0);
+	glScalef(0.1, 0.1, 0.5);
+  glColor3f(1, 0.27, 0);
+  glTranslatef(-6, -3, 0.4);
+  desenhaCuboRobo();
+  glPopMatrix();
+
+	//braco direito
+  glPushMatrix();
+	glRotatef(90, 0, 1, 0);
+	glScalef(0.1, 0.1, 0.5);
+  glColor3f(1, 0.27, 0);
+  glTranslatef(-6, 3, 0.4);
   desenhaCuboRobo();
   glPopMatrix();
 
@@ -389,8 +408,28 @@ void desenhaRobo(){
   //glScalef(0.01, 0.1, 0.5);
 	glColor3f(1, 0.27, 0);
   glTranslatef(0, 0, -0.29);
-	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
+	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 50);
   glPopMatrix();
+
+	/*
+	//Antena1
+  glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(1, 0.27, 0);
+  glTranslatef(0, 1.3, 0.1);
+	gluCylinder(eyes, 0.08, 0.03, 0.3, 50, 50);
+  glPopMatrix();
+
+	//Antena2
+  glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(1, 0.27, 0);
+  glTranslatef(0, 1.3, -0.57);
+	gluCylinder(eyes, 0.08, 0.03, 0.3, 50, 1);
+  glPopMatrix();
+	*/
 
   //Roda
   glPushMatrix();
@@ -618,22 +657,22 @@ void desenha(void) {
   glPopMatrix();
   //FIM DO CHAO
 
-  desenhaParede();
+  //desenhaParede();
 
 	glPushMatrix();
-  robox += speedx; roboy += speedy;
-  if((int)robox == points[iPoint].x || (int)roboy == points[iPoint].y){
-    speedx = points[iPoint].speedx;
-    speedy = points[iPoint].speedy;
-    if(points[iPoint].nextdir == 'D'){ count = 9; rotation = -ROBOTURN; }
-    else if(points[iPoint].nextdir == 'E'){ count = 9; rotation = ROBOTURN; }
-    else if(points[iPoint].nextdir == 'A'){ count = 18; rotation = ROBOTURN; }
-    if(iPoint < 29) iPoint++;
-    if(iPoint == 5) iPoint++;
-  }
-  glTranslatef(robox - MAXLAB/2, roboy - MAXLAB / 2, 0);
-  glScalef(1, 1, 1);
-  glRotatef(90, 0, 0, 1);
+  // robox += speedx; roboy += speedy;
+  // if((int)robox == points[iPoint].x || (int)roboy == points[iPoint].y){
+  //   speedx = points[iPoint].speedx;
+  //   speedy = points[iPoint].speedy;
+  //   if(points[iPoint].nextdir == 'D'){ count = 9; rotation = -ROBOTURN; }
+  //   else if(points[iPoint].nextdir == 'E'){ count = 9; rotation = ROBOTURN; }
+  //   else if(points[iPoint].nextdir == 'A'){ count = 18; rotation = ROBOTURN; }
+  //   if(iPoint < 29) iPoint++;
+  //   if(iPoint == 5) iPoint++;
+  // }
+  // glTranslatef(robox - MAXLAB/2, roboy - MAXLAB / 2, 0);
+  // glScalef(1, 1, 1);
+  // glRotatef(90, 0, 0, 1);
   desenhaRobo();
   glPopMatrix();
   desenhaObjetos();
