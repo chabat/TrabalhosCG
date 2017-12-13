@@ -30,5 +30,7 @@ void desenhaObjetos(void);
 void desenha(void);
 void Redesenha(int);
 void AlteraTamanhoJanela(GLsizei w, GLsizei h);
-
+///////////////////////////////////////////////////////////////////
+unsigned char * loadBMP(const char * imagepath, unsigned int *height, unsigned int *width);
+///////////////////////////////////////////////////////////////////
 #endif
