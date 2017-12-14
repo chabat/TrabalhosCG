@@ -31,5 +31,6 @@ void desenhaObjetos(void);
 void desenha(void);
 void Redesenha(int);
 void AlteraTamanhoJanela(GLsizei w, GLsizei h);
+void loadTexture(const char * imagepath, int i);
 
 #endif
