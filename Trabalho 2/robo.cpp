@@ -168,8 +168,8 @@ void Inicializa(void) {
 
   //Cria duas texturas do opengl
   glGenTextures(1, tex);
-  loadTexture("./minegrama.bmp", 0);
-  loadTexture("./wood.bmp", 1);
+  loadTexture("./textures/grass.bmp", 0);
+  loadTexture("./textures/wood.bmp", 1);
 }
 
 //Desenha quadrica
@@ -425,7 +425,7 @@ void desenhaRobo(){
 
 	//Cabeca
   glPushMatrix();
-  //glRotatef(hRotate += 0.5, 0.0, 0.0, 1.0);
+  glRotatef(hRotate += 0.5, 0.0, 0.0, 1.0);
   glScalef(0.3, 0.3, 0.25);
   glColor3fv(corpo);
   glTranslatef(0, 0, 5);
@@ -436,7 +436,7 @@ void desenhaRobo(){
 	GLUquadricObj * eyes = quadric();
   //Olho esquerdo
   glPushMatrix();
-  //glRotatef(hRotate, -0.05, 0, 50);
+  glRotatef(hRotate, -0.05, 0, 50);
 	//Exterior
 	glColor3f(1, 1, 1);
   glTranslatef(0.151, 0.08, 1.3);
@@ -450,7 +450,7 @@ void desenhaRobo(){
 
   //Olho direito
   glPushMatrix();
-  //glRotatef(hRotate, -0.05, 0, 50);
+  glRotatef(hRotate, -0.05, 0, 50);
 	//Exterior
 	glColor3f(1, 1, 1);
   glTranslatef(0.151, -0.08, 1.3);
@@ -464,7 +464,7 @@ void desenhaRobo(){
 
   //Boca
   glPushMatrix();
-  //glRotatef(hRotate+=1, -0.05, 0, 4);
+  glRotatef(hRotate+=1, -0.05, 0, 4);
 	glColor3fv(detalhes);
 	glTranslatef(0.25, 0, 1.2);
   glRotatef(90, 0, -1, 0);
