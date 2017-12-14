@@ -40,7 +40,7 @@ GLdouble yAdjust = -2;
 
 //Variaveis de textura
 GLuint tex[2];
-float tex_coord = 1;
+float tex_coord = 2;
 
 
 //Matriz do Labirinto
@@ -197,12 +197,12 @@ void desenhaCubo(int posi, int posj) {
     {1, 1, 1} //7
   };
   GLfloat cores[7][3] = {
-    {0.2, 0.8, 0.2},   //"Cima"
-    {0.13, 0.55, 0.13},    //"esquerda"
-    {0.13, 0.55, 0.13},   //"Embaixo"
-    {0.13, 0.55, 0.13},   //"Direita"
-    {0.13, 0.55, 0.13},   //"Atras"
-    {0.13, 0.55, 0.13},   //"frente"MAXLAB
+    {0.49, 0.29, 0},   //"Cima"
+    {0.49, 0.29, 0},    //"esquerda"
+    {0.49, 0.29, 0},   //"Embaixo"
+    {0.49, 0.29, 0},   //"Direita"
+    {0.49, 0.29, 0},   //"Atras"
+    {0.49, 0.29, 0},   //"frente"MAXLAB
     {1, 0, 0}
   };
   int cr[24] = {
@@ -799,7 +799,7 @@ void desenha(void) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex[0]);
     //Desenhar o chao;
-    glColor3f(0, 0.39, 0);
+    glColor3f(0.49, 0.99, 0);
     glBegin(GL_QUADS);
     glTexCoord2f(-2*MAXLAB/2, -2*MAXLAB/2 - 3);
     glVertex3f(-2*MAXLAB/2, -2*MAXLAB/2 - 3, -0.001);
@@ -999,6 +999,6 @@ void loadTexture(const char * imagepath, int i){
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   //Substitui a cor original
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
 
 }
