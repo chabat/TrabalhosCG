@@ -10,13 +10,14 @@
 #define MAXLAB 30
 #define SPEED 0.10;
 #define INF 112345
-#define CAMTURN 0.111111111 * 2
+#define CAMTURN 0.11111111111111 * 2
 #define ROBOTURN 10
+#define CENTRO MAXLAB / 2
 
 typedef struct{
   int x, y;
   double speedx, speedy;
-  char nextdir;
+  int nextdir;
 }point_t;
 
 void Inicializa(void);

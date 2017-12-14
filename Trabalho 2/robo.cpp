@@ -1,10 +1,18 @@
 #include "robo.h"
 
+int chao = 1; // desenhar o chao ou nao.
+GLdouble cam_turnx; // Direcao que a camera se move.
+GLdouble cam_turny;
+int count_cam;
+int finished = 0;
+
+GLfloat lightpos1[] = {0, 0, 0};
+
 GLdouble rotacao_roda = 0;
 GLdouble grau_roda = 0;
 GLdouble base_grau_roda = 0.01745;
 
-int look = 0, iPoint = 0, grau = 0, count = 0, rotation = 0;
+int look = 1, iPoint = 0, grau = 0, count = 0, rotation = 0;
 point_t points[30];
 double robox = 5, roboy = -2;
 GLdouble rotatextop = 0;
@@ -12,8 +20,8 @@ GLdouble rotateytop = 0;
 GLdouble rotateztop = 46;
 
 GLdouble centerxthird = 0;
-GLdouble centerythird = 1;
-GLdouble centerzthird = 0;
+GLdouble centerythird = 2;
+GLdouble centerzthird = 1;
 
 GLdouble rotatexthird = 0;
 GLdouble rotateythird = 0;
@@ -67,40 +75,64 @@ int labirinto[MAXLAB][MAXLAB] = {
 
 // Inicializa parametros de rendering
 void Inicializa(void) {
-	// Define a cor de fundo da janela de visualização como preta
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_SMOOTH);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-  points[0].x = INF; points[0].y = 14; points[0].speedx = SPEED; points[0].speedy = 0; points[0].nextdir = 'D';
-  points[1].x = 10; points[1].y = INF; points[1].speedx = -SPEED; points[1].speedy = 0; points[1].nextdir = 'A';
-  points[2].x = 4; points[1].y = INF; points[2].speedx = 0; points[2].speedy = -SPEED; points[2].nextdir = 'E';
-  points[3].x = INF; points[3].y = 8; points[3].speedx = SPEED; points[3].speedy = 0; points[3].nextdir = 'E';
-  points[4].x = 14; points[4].y = INF; points[4].speedx = 0; points[4].speedy = -SPEED; points[4].nextdir = 'D';
-  points[6].x = INF; points[6].y = 4; points[6].speedx = SPEED; points[6].speedy = 0; points[6].nextdir = 'E';
-  points[7].x = 28; points[7].y = INF; points[7].speedx = 0; points[7].speedy = SPEED; points[7].nextdir = 'E';
-  points[8].x = INF; points[8].y = 13; points[8].speedx = -SPEED; points[8].speedy = 0; points[8].nextdir = 'E'; //
-  points[9].x = 20; points[9].y = INF; points[9].speedx = 0; points[9].speedy = SPEED; points[9].nextdir = 'D';
-  points[10].x = INF; points[10].y = 22; points[10].speedx = SPEED; points[10].speedy = 0; points[10].nextdir = 'D';
-  points[11].x = 26; points[11].y = INF; points[11].speedx = -SPEED; points[11].speedy = 0;  points[11].nextdir = 'A';
-  points[12].x = 17; points[12].y = INF; points[12].speedx = SPEED; points[12].speedy = 0;  points[12].nextdir = 'A';
-  points[13].x = 21; points[13].y = INF; points[13].speedx = 0; points[13].speedy = -SPEED;  points[13].nextdir = 'D';
-  points[14].x = INF; points[14].y = 17; points[14].speedx = -SPEED; points[14].speedy = 0;  points[14].nextdir = 'D';
-  points[15].x = 13; points[15].y = INF; points[15].speedx = 0; points[15].speedy = SPEED;  points[15].nextdir = 'D';
-  points[16].x = INF; points[16].y = 22; points[16].speedx = -SPEED; points[16].speedy = 0;  points[16].nextdir = 'E';
-  points[17].x = 3; points[17].y = INF; points[17].speedx = 0; points[17].speedy = SPEED;  points[17].nextdir = 'D';
-  points[18].x = INF; points[18].y = 25; points[18].speedx = -SPEED; points[18].speedy = 0; points[18].nextdir = 'E';
-  points[19].x = 1; points[19].y = INF; points[19].speedx = 0; points[19].speedy = SPEED;  points[19].nextdir = 'D';
-  points[20].x = INF; points[20].y = 28; points[20].speedx = SPEED; points[20].speedy = 0; points[20].nextdir = 'D';
-  points[21].x = 8; points[21].y = INF; points[21].speedx = 0; points[21].speedy = -SPEED; points[21].nextdir = 'D';
-  points[22].x = INF; points[22].y = 24; points[22].speedx = SPEED; points[22].speedy = 0; points[22].nextdir = 'E';
-  points[23].x = 20; points[23].y = INF; points[23].speedx = 0; points[23].speedy = SPEED; points[23].nextdir = 'E';
-  points[24].x = INF; points[24].y = 28; points[24].speedx = -SPEED; points[24].speedy = 0;points[24].nextdir = 'E';
-  points[25].x = 17; points[25].y = INF; points[25].speedx = SPEED; points[25].speedy = 0; points[25].nextdir = 'A';
-  points[26].x = 20; points[26].y = INF; points[26].speedx = 0; points[26].speedy = -SPEED;points[26].nextdir = 'D';
-  points[27].x = INF; points[27].y = 24; points[27].speedx = SPEED; points[27].speedy = 0; points[27].nextdir = 'E';
-  points[28].x = 28; points[28].y = INF; points[28].speedx = 0; points[28].speedy = SPEED; points[28].nextdir = 'E';
-  points[29].x = INF; points[29].y = 31; points[29].speedx = 0; points[27].speedy = 0; points[29].nextdir = 'E';
+  GLfloat AmbientLight1[] = {0.2, 0.2, 0.2, 1.0};
+  GLfloat DiffuseLight1[] = {0.5, 0.5, 0.5, 1.0};
+  GLfloat SpecularLight1[] = {0.5, 0.5, 0.5,0.5};
+  GLfloat Specularity[] = {0.5, 0.5, 0.5, 1.0};
+  GLint specMaterial = 10;
+
+  // Define a cor de fundo da janela de visualização como preta
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_SMOOTH);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+  glShadeModel(GL_SMOOTH);
+  glEnable(GL_NORMALIZE);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT1);
+  glEnable(GL_COLOR_MATERIAL);
+
+  glMaterialfv(GL_FRONT, GL_SPECULAR, Specularity);
+  glMateriali(GL_FRONT, GL_SHININESS, specMaterial);
+
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, AmbientLight1);
+
+  glLightfv(GL_LIGHT1, GL_AMBIENT, AmbientLight1);
+  glLightfv(GL_LIGHT1, GL_DIFFUSE, DiffuseLight1);
+  glLightfv(GL_LIGHT1, GL_SPECULAR, SpecularLight1);
+
+  points[0].x = INF; points[0].y = 14; points[0].speedx = SPEED; points[0].speedy = 0; points[0].nextdir = 1;
+  points[1].x = 10; points[1].y = INF; points[1].speedx = -SPEED; points[1].speedy = 0; points[1].nextdir = 11;
+  points[2].x = 4; points[1].y = INF; points[2].speedx = 0; points[2].speedy = -SPEED; points[2].nextdir = 8;
+  points[3].x = INF; points[3].y = 8; points[3].speedx = SPEED; points[3].speedy = 0; points[3].nextdir = 6;
+  points[4].x = 14; points[4].y = INF; points[4].speedx = 0; points[4].speedy = -SPEED; points[4].nextdir = 3;
+  points[6].x = INF; points[6].y = 4; points[6].speedx = SPEED; points[6].speedy = 0; points[6].nextdir = 6;
+  points[7].x = 28; points[7].y = INF; points[7].speedx = 0; points[7].speedy = SPEED; points[7].nextdir = 7;
+  points[8].x = INF; points[8].y = 13; points[8].speedx = -SPEED; points[8].speedy = 0; points[8].nextdir = 5; //
+  points[9].x = 20; points[9].y = INF; points[9].speedx = 0; points[9].speedy = SPEED; points[9].nextdir = 4;
+  points[10].x = INF; points[10].y = 22; points[10].speedx = SPEED; points[10].speedy = 0; points[10].nextdir = 1;
+  points[11].x = 26; points[11].y = INF; points[11].speedx = -SPEED; points[11].speedy = 0;  points[11].nextdir = 11;
+  points[12].x = 17; points[12].y = INF; points[12].speedx = SPEED; points[12].speedy = 0;  points[12].nextdir = 12;
+  points[13].x = 21; points[13].y = INF; points[13].speedx = 0; points[13].speedy = -SPEED;  points[13].nextdir = 3;
+  points[14].x = INF; points[14].y = 17; points[14].speedx = -SPEED; points[14].speedy = 0;  points[14].nextdir = 2;
+  points[15].x = 13; points[15].y = INF; points[15].speedx = 0; points[15].speedy = SPEED;  points[15].nextdir = 4;
+  points[16].x = INF; points[16].y = 22; points[16].speedx = -SPEED; points[16].speedy = 0;  points[16].nextdir = 5;
+  points[17].x = 3; points[17].y = INF; points[17].speedx = 0; points[17].speedy = SPEED;  points[17].nextdir = 4;
+  points[18].x = INF; points[18].y = 25; points[18].speedx = -SPEED; points[18].speedy = 0; points[18].nextdir = 5;
+  points[19].x = 1; points[19].y = INF; points[19].speedx = 0; points[19].speedy = SPEED;  points[19].nextdir = 4;
+  points[20].x = INF; points[20].y = 28; points[20].speedx = SPEED; points[20].speedy = 0; points[20].nextdir = 1;
+  points[21].x = 8; points[21].y = INF; points[21].speedx = 0; points[21].speedy = -SPEED; points[21].nextdir = 3;
+  points[22].x = INF; points[22].y = 24; points[22].speedx = SPEED; points[22].speedy = 0; points[22].nextdir = 6;
+  points[23].x = 20; points[23].y = INF; points[23].speedx = 0; points[23].speedy = SPEED; points[23].nextdir = 7;
+  points[24].x = INF; points[24].y = 28; points[24].speedx = -SPEED; points[24].speedy = 0;points[24].nextdir = 5;
+  points[25].x = 17; points[25].y = INF; points[25].speedx = SPEED; points[25].speedy = 0; points[25].nextdir = 12;
+  points[26].x = 20; points[26].y = INF; points[26].speedx = 0; points[26].speedy = -SPEED;points[26].nextdir = 3;
+  points[27].x = INF; points[27].y = 24; points[27].speedx = SPEED; points[27].speedy = 0; points[27].nextdir = 6;
+  points[28].x = 28; points[28].y = INF; points[28].speedx = 0; points[28].speedy = SPEED; points[28].nextdir = 7;
+  points[29].x = INF; points[29].y = 31; points[29].speedx = 0; points[29].speedy = 0; points[29].nextdir = 1;
+  points[29].x = INF; points[30].y = 31; points[30].speedx = 0; points[30].speedy = 0; points[30].nextdir = 3;
+  points[29].x = INF; points[31].y = 31; points[31].speedx = 0; points[31].speedy = 0; points[31].nextdir = 2;
+  points[29].x = INF; points[32].y = 31; points[32].speedx = 0; points[32].speedy = 0; points[32].nextdir = 4;
 
 }
 
@@ -132,11 +164,11 @@ void getViewPos(unsigned char key, int x, int y){
     if(key == '4') rotatexthird -= 1;
     if(key == '6') rotatexthird += 1;
   }
-  if(key == 'q') look = 1;
-  if(key == 'w') look = 2;
-  if(key == 'e') look = 3;
-  if(key == 'r') look = 4;
-  if(key == 't') look = 5;
+  if(key == 'q' || key == '/') look = 1;
+  if(key == 'w' || key == ',') look = 2;
+  if(key == 'e' || key == '.') look =  look == 3 ? 6 : 3;
+  if(key == 'r' || key == 'p') look = 4;
+  if(key == 't' || key == 'y') look =  look == 5 ? 7 : 5 ;
 }
 
 //Função para desenhar o cubo.
@@ -176,7 +208,15 @@ void desenhaCubo(int posi, int posj) {
     else if(posj == 0 && i == 5) glColor3fv(cores[0]);
     else if(posj == MAXLAB-1 && i == 4) glColor3fv(cores[0]);
     else glColor3fv(cores[i]);
-    for (j = 0; j < 4; j++) glVertex3fv(cords[cr[pos++]]);
+    for (j = 0; j < 4; j++){
+      if(pos >= 0 && pos < 4) glNormal3f(0, -1, 0);
+      if(pos >= 4 && pos < 8) glNormal3f(-1, 0, 0);
+      if(pos >= 8 && pos < 12) glNormal3f(0, 1, 0);
+      if(pos >= 12 && pos < 16) glNormal3f(1, 0, 0);
+      if(pos >= 16 && pos < 20) glNormal3f(0, 0, 1);
+      if(pos >= 20 && pos < 24) glNormal3f(0, 0, -1);
+      glVertex3fv(cords[cr[pos++]]);
+    }
   }
   glEnd();
 }
@@ -205,7 +245,13 @@ void desenhaCuboRobo() {
   glBegin(GL_QUADS);
   for (i = 0; i < 6; i++) {
     //glColor3fv(cores[i]);
-    for (j = 0; j < 4; j++) glVertex3fv(cords[cr[pos++]]);
+    for (j = 0; j < 4; j++){
+      if(pos >= 0 && pos < 4) glNormal3f(0, -1, 0);
+      if(pos >= 4 && pos < 8) glNormal3f(-1, 0, 0);
+      if(pos >= 8 && pos < 12) glNormal3f(0, 1, 0);
+      if(pos >= 12 && pos < 16) glNormal3f(1, 0, 0);
+      glVertex3fv(cords[cr[pos++]]);
+    }
   }
   glEnd();
 }
@@ -255,6 +301,7 @@ void desenhaCadeira(int i, GLdouble grau_roda){
   desenhaCuboRobo();
   glPopMatrix();
 }
+
 void desenhaRodaGigante(){
   glTranslatef(-20, 0, 0);
   glRotatef(90, 0, 0, 1);
@@ -290,18 +337,18 @@ void desenhaRodaGigante(){
   glPushMatrix();
   glTranslatef(-4, 1, 7);
   glRotatef(90, 1, 0, 0);
-  gluCylinder(base, 0.6, 0.6, 3, 50, 25);
+  gluCylinder(base, 0.6, 0.6, 4, 50, 25);
   glPopMatrix();
-  
-  
+
+
   glColor3f(0.55f, 0.27f, 0.07f);
-  
+
   glPushMatrix();
   glTranslatef(-4, 1, 7);
   glRotatef(90, 1, 0, 0);
   gluDisk(base, 0, 0.6, 50, 25);
   glPopMatrix();
-  
+
   glPushMatrix();
   glTranslatef(-4, -3, 7);
   glRotatef(90, 1, 0, 0);
@@ -324,193 +371,194 @@ void desenhaRodaGigante(){
 }
 
 void desenhaRobo(){
+  GLfloat detalhes[3] = {0.7, 0.13, 0.13};
+  GLfloat corpo[3] = {0.10, 0.10, 0.10};
   //printf("%d %d %c\n", count, grau, points[iPoint].nextdir);
   if(count){grau += rotation; count--;}
   glRotatef(grau, 0, 0, 1);
   glTranslatef(0, 0, 0.3);
-  
-  //Cabeca
+
+	//Cabeca
   glPushMatrix();
   //glRotatef(hRotate += 0.5, 0.0, 0.0, 1.0);
   glScalef(0.3, 0.3, 0.25);
-  glColor3f(0.41f, 0.41f, 0.41f);
+  glColor3fv(corpo);
   glTranslatef(0, 0, 5);
   desenhaCuboRobo();
   glPopMatrix();
-  
-  //OLHOS
-  GLUquadricObj * eyes = quadric();
+
+	//OLHOS
+	GLUquadricObj * eyes = quadric();
   //Olho esquerdo
   glPushMatrix();
   //glRotatef(hRotate, -0.05, 0, 50);
-  //Exterior
-  glColor3f(1, 1, 1);
+	//Exterior
+	glColor3f(1, 1, 1);
   glTranslatef(0.151, 0.08, 1.3);
   glRotatef(90, 0, 1, 0);
   gluDisk(eyes, 0, 0.04, 25, 1);
-  //Interior
-  glTranslatef(0.0, 0.0, 0.001);
-  glColor3f(1, 0.27, 0);
-  gluDisk(eyes, 0, 0.02, 25, 1);
+	//Interior
+	glTranslatef(0.0, 0.0, 0.001);
+  glColor3fv(corpo);
+	gluDisk(eyes, 0, 0.02, 25, 1);
   glPopMatrix();
-  
+
   //Olho direito
   glPushMatrix();
   //glRotatef(hRotate, -0.05, 0, 50);
-  //Exterior
-  glColor3f(1, 1, 1);
+	//Exterior
+	glColor3f(1, 1, 1);
   glTranslatef(0.151, -0.08, 1.3);
   glRotatef(90, 0, 1, 0);
   gluDisk(eyes, 0, 0.04, 25, 1);
-  //Interior
-  glTranslatef(0.0, 0.0, 0.001);
-  glColor3f(1, 0.27, 0);
-  gluDisk(eyes, 0, 0.02, 25, 1);
+	//Interior
+	glTranslatef(0.0, 0.0, 0.001);
+  glColor3fv(corpo);
+	gluDisk(eyes, 0, 0.02, 25, 1);
   glPopMatrix();
-  
+
   //Boca
   glPushMatrix();
   //glRotatef(hRotate+=1, -0.05, 0, 4);
-  glColor3f(1, 0.27, 0);
-  glTranslatef(0.25, 0, 1.2);
+	glColor3fv(detalhes);
+	glTranslatef(0.25, 0, 1.2);
   glRotatef(90, 0, -1, 0);
   //glScalef(0.04, 0.14, 0.001);
-  gluCylinder(eyes, 0.055, 0.03, 0.25, 50, 50);
-  //desenhaCuboRobo();
+	gluCylinder(eyes, 0.055, 0.03, 0.25, 50, 50);
+	//desenhaCuboRobo();
   glPopMatrix();
-  
+
   //Pescoco
   glPushMatrix();
   glScalef(0.1, 0.1, 0.3);
-  glColor3f(0.41f, 0.41f, 0.41f);
+  glColor3fv(corpo);
   glTranslatef(0, 0.1, 3.5);
   desenhaCuboRobo();
   glPopMatrix();
-  
+
   //Tronco
   glPushMatrix();
   glScalef(0.5, 0.5, 0.5);
-  glColor3f(0.41f, 0.41f, 0.41f);
+  glColor3fv(corpo);
   glTranslatef(0, 0, 1.5);
   desenhaCuboRobo();
   glPopMatrix();
-  
-  //Antebraco esquerdo
+
+	//Antebraco esquerdo
   glPushMatrix();
-  glScalef(0.1, 0.1, 0.3);
-  glColor3f(1, 0.27, 0);
+	glScalef(0.1, 0.1, 0.3);
+  glColor3fv(corpo);
   glTranslatef(0, 3, 2.6);
   desenhaCuboRobo();
   glPopMatrix();
-  
+
   //Antebraco direito
   glPushMatrix();
   glScalef(0.1, 0.1, 0.3);
-  glColor3f(1, 0.27, 0);
+  glColor3fv(corpo);
   glTranslatef(0, -3, 2.6);
   desenhaCuboRobo();
   glPopMatrix();
-  
-  //braco esquerdo
+
+	//braco esquerdo
   glPushMatrix();
-  glRotatef(90, 0, 1, 0);
-  glScalef(0.1, 0.1, 0.5);
-  glColor3f(1, 0.27, 0);
+	glRotatef(90, 0, 1, 0);
+	glScalef(0.1, 0.1, 0.5);
+  glColor3fv(corpo);
   glTranslatef(-6, -3, 0.4);
   desenhaCuboRobo();
   glPopMatrix();
-  
-  //braco direito
+
+	//braco direito
   glPushMatrix();
-  glRotatef(90, 0, 1, 0);
-  glScalef(0.1, 0.1, 0.5);
-  glColor3f(1, 0.27, 0);
+	glRotatef(90, 0, 1, 0);
+	glScalef(0.1, 0.1, 0.5);
+  glColor3fv(corpo);
   glTranslatef(-6, 3, 0.4);
   desenhaCuboRobo();
   glPopMatrix();
-  
+
   //Apoio de roda esquerdo
   glPushMatrix();
   //glScalef(0.01, 0.1, 0.5);
-  glColor3f(0.41f, 0.41f, 0.41f);
+  glColor3fv(corpo);
   glTranslatef(0, 0.2, 0);
-  gluCylinder(eyes, 0.03, 0.03, 0.5, 50, 1);
+	gluCylinder(eyes, 0.03, 0.03, 0.5, 50, 1);
   glPopMatrix();
-  
+
   //Apoio de roda direito
   glPushMatrix();
   //glScalef(0.01, 0.1, 0.5);
-  glColor3f(0.41f, 0.41f, 0.41f);
+  glColor3fv(corpo);
   glTranslatef(0, -0.2, 0);
-  gluCylinder(eyes, 0.03, 0.03, 0.5, 50, 1);
+	gluCylinder(eyes, 0.03, 0.03, 0.5, 50, 1);
   glPopMatrix();
-  
-  //Ligação entre os apoios
+
+	//Ligação entre os apoios
   glPushMatrix();
-  glRotatef(90, 1, 0, 0);
+	glRotatef(90, 1, 0, 0);
   //glScalef(0.01, 0.1, 0.5);
-  glColor3f(0.41f, 0.41f, 0.41f);
+  glColor3fv(corpo);
   glTranslatef(0, 0, -0.225);
-  gluCylinder(eyes, 0.03, 0.03, 0.45, 50, 1);
+	gluCylinder(eyes, 0.03, 0.03, 0.45, 50, 1);
   glPopMatrix();
-  
-  //Aro 1
+
+	//Aro 1
   glPushMatrix();
-  glColor3f(1, 0.27, 0);
-  glRotatef(180, 1, 0, 0);
-  glRotatef(62*move, 0, -1, 0);
+	glColor3f(0.93, 0.57, 0.13);
+	glRotatef(180, 1, 0, 0);
+	glRotatef(62*move, 0, -1, 0);
   //glScalef(0.01, 0.1, 0.5);
   glTranslatef(0, 0, -0.29);
-  gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
+	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
   glPopMatrix();
-  //Aro 2
+	//Aro 2
   glPushMatrix();
-  glRotatef(180, 1, 0, 0);
-  glRotatef(62*move, 0, -1, 0);
+	glRotatef(180, 1, 0, 0);
+	glRotatef(62*move, 0, -1, 0);
   //glScalef(0.01, 0.1, 0.5);
-  glColor3f(1, 0.27, 0);
+	glColor3f(0.93, 0.57, 0.13);
   glTranslatef(0, 0, -0.05);
-  gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
+	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
   glPopMatrix();
-  //Aro 3
+	//Aro 3
   glPushMatrix();
-  glRotatef(90, 0, 1, 0);
-  glRotatef(62*move, 0, 1, 0);
+	glRotatef(90, 0, 1, 0);
+	glRotatef(62*move, 0, 1, 0);
   //glScalef(0.01, 0.1, 0.5);
-  glColor3f(1, 0.27, 0);
+	glColor3f(0.93, 0.57, 0.13);
   glTranslatef(0, 0, -0.01);
-  gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
+	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 1);
   glPopMatrix();
-  //Aro 4
+	//Aro 4
+  glPushMatrix();
+	glRotatef(90, 0, 1, 0);
+	glRotatef(62*move, 0, 1, 0);
+  //glScalef(0.01, 0.1, 0.5);
+	glColor3f(0.93, 0.57, 0.13);
+  glTranslatef(0, 0, -0.29);
+	gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 50);
+  glPopMatrix();
+
+	//Antena
+  glPushMatrix();
+	glColor3f(0.41, 0.41, 0.41);
+  glTranslatef(0, 0, 1.3);
+	gluCylinder(eyes, 0.01, 0.01, 0.25, 50, 50);
+  glColor3fv(detalhes);
+  glTranslatef(0, 0, 0.3);
+  gluSphere(eyes, 0.05, 50, 50);
+  glPopMatrix();
+
+  //Barriga
   glPushMatrix();
   glRotatef(90, 0, 1, 0);
-  glRotatef(62*move, 0, 1, 0);
-  //glScalef(0.01, 0.1, 0.5);
-  glColor3f(1, 0.27, 0);
-  glTranslatef(0, 0, -0.29);
-  gluCylinder(eyes, 0.03, 0.03, 0.30, 50, 50);
+  glScalef(0.4, 0.3, 0.01);
+  glColor3f(1, 1, 1);
+  glTranslatef(-1.8, 0, 25);
+  desenhaCuboRobo();
   glPopMatrix();
-  
-  /*
-  //Antena1
-  glPushMatrix();
-  glRotatef(90, 1, 0, 0);
-  //glScalef(0.01, 0.1, 0.5);
-  glColor3f(1, 0.27, 0);
-  glTranslatef(0, 1.3, 0.1);
-  gluCylinder(eyes, 0.08, 0.03, 0.3, 50, 50);
-  glPopMatrix();
-  
-  //Antena2
-  glPushMatrix();
-  glRotatef(90, 1, 0, 0);
-  //glScalef(0.01, 0.1, 0.5);
-  glColor3f(1, 0.27, 0);
-  glTranslatef(0, 1.3, -0.57);
-  gluCylinder(eyes, 0.08, 0.03, 0.3, 50, 1);
-  glPopMatrix();
-  */
-  
+
   //Roda
   glPushMatrix();
   glTranslatef(0, 0, 0);
@@ -550,6 +598,7 @@ void desenhaParede(void) {
       	glScalef(1, 1, 4);
       	glTranslatef(i - MAXLAB/2, j - MAXLAB / 2, 0);
       	desenhaCubo(i, j);
+
       	glPopMatrix();
       }
     }
@@ -566,7 +615,7 @@ void desenhaObjetos(void) {
   glTranslatef(0, 0, 3);
   desenhaCuboRobo();
   glPopMatrix();
-  
+
   //Olho esquerdo
   glPushMatrix();
   glRotatef(90, 0, 0, 1);
@@ -624,13 +673,17 @@ void desenhaObjetos(void) {
       x = radius*cos(beta)*sin(alpha);
       y = radius*sin(beta)*sin(alpha);
       z = radius*cos(alpha);
-      if(alpha >= PI/3 && alpha <= 2*PI/3)
+      if(alpha >= PI/3 && alpha <= 2*PI/3){
+	glNormal3f(0,1,0);
 	glVertex3f(x, y, z);
+      }
       x = radius*cos(beta)*sin(alpha + PI/gradation);
       y = radius*sin(beta)*sin(alpha + PI/gradation);
       z = radius*cos(alpha + PI/gradation);
-      if(alpha >= PI/3 && alpha <= 2*PI/3)
+      if(alpha >= PI/3 && alpha <= 2*PI/3){
+	glNormal3f(0,1,0);
 	glVertex3f(x, y, z);
+      }
     }
   }
   glEnd();
@@ -693,72 +746,149 @@ void desenha(void) {
   // Limpa a janela de visualização:
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  if(count){
-    if(points[iPoint-1].nextdir == 'A')
-      if(robox-(MAXLAB/2) >= robox-(MAXLAB/2) + xAdjust) xAdjust += CAMTURN;
-      else if(robox-(MAXLAB/2) <= robox-(MAXLAB/2) + xAdjust) xAdjust +=  CAMTURN;
-      else if(roboy-(MAXLAB/2) >= roboy-(MAXLAB/2) + yAdjust) yAdjust +=  CAMTURN;
-      else yAdjust += CAMTURN;
-    else if(speedy != 0){
-      if(robox-(MAXLAB/2) >= robox-(MAXLAB/2) + xAdjust){
-	if(points[iPoint-1].nextdir == 'D'){ xAdjust += CAMTURN; yAdjust += CAMTURN;}
-	else if(points[iPoint-1].nextdir == 'E'){ xAdjust += CAMTURN; yAdjust -= CAMTURN;}
-      }
-      else{
-	if(points[iPoint-1].nextdir == 'D') { xAdjust -= CAMTURN; yAdjust -= CAMTURN;}
-	else if(points[iPoint-1].nextdir == 'E'){ xAdjust -= CAMTURN; yAdjust += CAMTURN;}
-      }
-    }
-    else if(speedx != 0){
-      if(roboy-(MAXLAB/2) >= roboy-(MAXLAB/2) + yAdjust){;
-	if(points[iPoint-1].nextdir == 'D'){ yAdjust += CAMTURN; xAdjust -= CAMTURN; }
-	else if(points[iPoint-1].nextdir == 'E') { yAdjust += CAMTURN; xAdjust += CAMTURN; }
-      }
-      else{
-	if(points[iPoint-1].nextdir == 'D'){ yAdjust -= CAMTURN; xAdjust += CAMTURN; }
-	else if(points[iPoint-1].nextdir == 'E') { yAdjust -= CAMTURN; xAdjust -= CAMTURN; }
-      }
-    }
+
+  if(count_cam){
+    count_cam--;
+    //printf("%f %f %d %d\n", xAdjust, yAdjust, cam_turnx, cam_turny);
+    xAdjust += cam_turnx;
+    yAdjust += cam_turny;
   }
-  
+
+
+  lightpos1[0] = 22;
+  lightpos1[1] = 20;
+  lightpos1[3] = 30;
+  lightpos1[4] = 1;
+  glLightfv(GL_LIGHT1, GL_POSITION, lightpos1);
 
   if(look <= 1){
-    printf("%lf %lf %lf\n", rotatextop, rotateytop, rotateztop);
+    //printf("%lf %lf %lf\n", rotatextop, rotateytop, rotateztop);
     gluLookAt(rotatextop, rotateytop, rotateztop, 0, 0, 0, 0, 1, 0);
   }
   else if(look == 2){
-    gluLookAt(robox-(MAXLAB/2)+xAdjust, roboy-(MAXLAB/2)+yAdjust, 3, robox-(MAXLAB/2), roboy-(MAXLAB/2), centerzthird, 0, 0, 1);
+    if(!finished)
+      gluLookAt(robox - (MAXLAB/2) + xAdjust, roboy - (MAXLAB/2) + yAdjust, 3, robox - (MAXLAB/2), roboy - (MAXLAB/2), centerzthird, 0, 0, 1);
+    else
+      gluLookAt( 19.0, 25.0, 4.0, 14.0, 17.0, 1.0, 0.0, 0.0, 1.0);
   }
   else if(look == 3) gluLookAt(-40.0, -4.0, 12.0, 0.0, 0.0, 5.0, 0.0, 0.0, 1.0);
   else if(look == 4) gluLookAt(-6.0, 0.0, 2.0, 0.0, -7.0, -2.0, 0.0, 0.0, 1.0);
   else if(look == 5) gluLookAt( -1.0, 3.0, 5.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+  else if(look == 6) gluLookAt( -19.0, -20.0, 23.0, -19.0, -3.0, 8.0, 0.0, 0.0, 1.0);
+  else if(look == 7) gluLookAt( 7.0, 3.0, 4.0, 2.0, 1.0, 1.0, 0.0, 0.0, 1.0);
+  if(chao){
+    //INICIO DO CHAO
+    glPushMatrix();
+    //Desenhar o chao;
+    glColor3f(0, 0.39, 0);
+    glBegin(GL_QUADS);
+    glVertex3f(-2*MAXLAB/2, -2*MAXLAB/2 - 3, -0.001);
+    glVertex3f(2*MAXLAB/2, -2*MAXLAB/2 - 3, -0.001);
+    glVertex3f(2*MAXLAB/2, 2*MAXLAB/2 + 3, -0.001);
+    glVertex3f(-2*MAXLAB/2, 2*MAXLAB/2 + 3, -0.001);
+    glEnd();
+    glPopMatrix();
+    //FIM DO CHAO
+  }
 
-  //INICIO DO CHAO
-  glPushMatrix();
-  //Desenhar o chao;
-  glColor3f(0, 0.39, 0);
-  glBegin(GL_QUADS);
-  glVertex3f(-2*MAXLAB/2, -2*MAXLAB/2 - 3, -0.001);
-  glVertex3f(2*MAXLAB/2, -2*MAXLAB/2 - 3, -0.001);
-  glVertex3f(2*MAXLAB/2, 2*MAXLAB/2 + 3, -0.001);
-  glVertex3f(-2*MAXLAB/2, 2*MAXLAB/2 + 3, -0.001);
-  glEnd();
-
-
-  glPopMatrix();
-  //FIM DO CHAO
-
-  desenhaParede();
-  
   glPushMatrix();
   robox += speedx; roboy += speedy;
+  // VERIFICAR SE O ROBO TEM Q VIRAR
   if((int)robox == points[iPoint].x || (int)roboy == points[iPoint].y){
+    if(iPoint == 30){
+      finished = 1;
+    }
     speedx = points[iPoint].speedx;
     speedy = points[iPoint].speedy;
-    if(points[iPoint].nextdir == 'D'){ count = 9; rotation = -ROBOTURN; }
-    else if(points[iPoint].nextdir == 'E'){ count = 9; rotation = ROBOTURN; }
-    else if(points[iPoint].nextdir == 'A'){ count = 18; rotation = ROBOTURN; }
-    if(iPoint < 29) iPoint++;
+    if(points[iPoint].nextdir == 1){ // DB
+      count = 9;
+      rotation = -ROBOTURN;
+      count_cam = 9;
+      cam_turnx = -CAMTURN;
+      cam_turny = CAMTURN;
+    }
+    if(points[iPoint].nextdir == 2){// DC
+      count = 9;
+      rotation = -ROBOTURN;
+      count_cam = 9;
+      cam_turnx = CAMTURN;
+      cam_turny = -CAMTURN;
+    }
+    if(points[iPoint].nextdir == 3){//DE
+      count = 9;
+      rotation = -ROBOTURN;
+      count_cam = 9;
+      cam_turnx = CAMTURN;
+      cam_turny = CAMTURN;
+    }
+    if(points[iPoint].nextdir == 4){//DD
+      count = 9;
+      rotation = -ROBOTURN;
+      count_cam = 9;
+      cam_turnx = -CAMTURN;
+      cam_turny = -CAMTURN;
+    }
+    if(points[iPoint].nextdir == 5){//EB
+      count = 9;
+      rotation = ROBOTURN;
+      count_cam = 9;
+      cam_turnx = CAMTURN;
+      cam_turny = CAMTURN;
+    }
+    if(points[iPoint].nextdir == 6){//EC
+      count = 9;
+      rotation = ROBOTURN;
+      count_cam = 9;
+      cam_turnx = -CAMTURN;
+      cam_turny = -CAMTURN;
+    }
+    if(points[iPoint].nextdir == 7){//EE
+      count = 9;
+      rotation = ROBOTURN;
+      count_cam = 9;
+      cam_turnx = CAMTURN;
+      cam_turny = -CAMTURN;
+    }
+    if(points[iPoint].nextdir == 8){//ED
+      count = 9;
+      rotation = ROBOTURN;
+      count_cam = 9;
+      cam_turnx = -CAMTURN;
+      cam_turny = CAMTURN;
+    }
+    if(points[iPoint].nextdir == 9){//AB
+      count = 18;
+      rotation = ROBOTURN;
+      count_cam = 18;
+      cam_turnx = 0;
+      cam_turny = CAMTURN;
+
+    }
+    if(points[iPoint].nextdir == 10){//AC
+      count = 18;
+      rotation = ROBOTURN;
+      count_cam = 18;
+      cam_turnx = 0;
+      cam_turny = -CAMTURN;
+
+    }
+    if(points[iPoint].nextdir == 11){//AE
+      count = 18;
+      rotation = ROBOTURN;
+      count_cam = 18;
+      cam_turnx = CAMTURN;
+      cam_turny = 0;
+
+    }
+    if(points[iPoint].nextdir == 12){//AD
+      count = 18;
+      rotation = ROBOTURN;
+      count_cam = 18;
+      cam_turnx = -CAMTURN;
+      cam_turny = 0;
+    }
+
+    if(iPoint <= 29) iPoint++;
     if(iPoint == 5) iPoint++;
   }
   glTranslatef(robox - MAXLAB/2, roboy - MAXLAB / 2, 0);
@@ -766,6 +896,7 @@ void desenha(void) {
   glRotatef(90, 0, 0, 1);
   desenhaRobo();
   glPopMatrix();
+  desenhaParede();
   desenhaObjetos();
   desenhaRodaGigante();
   glutSwapBuffers();
@@ -775,7 +906,7 @@ void desenha(void) {
 void Redesenha(int) {
   glutPostRedisplay();
   desenha();
-  glutTimerFunc(60,Redesenha,1);
+  glutTimerFunc(30,Redesenha,1);
 }
 
 
