@@ -1,17 +1,23 @@
 #include "robo.h"
+#include <cstdio>
 
 int chao = 1; // desenhar o chao ou nao.
-GLdouble cam_turnx; // Direcao que a camera se move.
+// Direcao que a camera se move.
+GLdouble cam_turnx;
 GLdouble cam_turny;
 int count_cam;
 int finished = 0;
 
+//Variáveis das luzes
 GLfloat lightpos1[] = {0, 0, 0, 1};
 GLfloat lightpos2[] = {0, 0, 0, 1};
+
+//Variaveis da roda gigante
 GLdouble rotacao_roda = 0;
 GLdouble grau_roda = 0;
 GLdouble base_grau_roda = 0.01745;
 
+//Variaveis de visualização
 int look = 1, iPoint = 0, grau = 0, count = 0, rotation = 0;
 point_t points[30];
 double robox = 5, roboy = -2;
@@ -27,6 +33,7 @@ GLdouble rotatexthird = 0;
 GLdouble rotateythird = 0;
 GLdouble rotatezthird = 46;
 
+//Variaveis auxiliares de coordenadas e ângulos
 GLfloat PI = 3.141592; // Valor de PI.
 GLfloat x, y, z, alpha, beta; // Variáveis para coordenadas e ângulos.
 GLfloat radius = 0.3;
@@ -81,10 +88,10 @@ int labirinto[MAXLAB][MAXLAB] = {
 };
 
 GLfloat ctrlpoints[4][4][3] = { // Controle do Nurbs;
-  { { -2.5, 3.0, -1.5 }, { -0.5, 2.0, -1.5 }, { 0.5, 2.5, -1.5 }, { 2.5, 1.5, -1.5 } },
+  { { -2.5, 2.0, -1.5 }, { -0.5, 1.0, -1.5 }, { 0.5, 1.5, -1.5 }, { 2.5, 0.5, -1.5 } },
   { { -2.5, 1.0, -0.5 }, { -0.5, -2.0, -0.5 }, { 0.5, 0, -0.5 }, { 2.5, -3,-0.5 } },
   { { -2.5, 1.0,  0.5 }, { -0.5, -2.0, 0.5 }, { 0.5, 0,  0.5 }, { 2.5, -3, 0.5 } },
-  { { -2.5, 3.0,  1.5 }, { -0.5, 2.0, 1.5 }, { 0.5, 2.5,  1.5 }, { 2.5, 1.5, 1.5 } },
+  { { -2.5, 2.0,  1.5 }, { -0.5, 1.0, 1.5 }, { 0.5, 1.5,  1.5 }, { 2.5, 0.5, 1.5 } },
 };
 
 
@@ -107,6 +114,7 @@ void Inicializa(void) {
   glEnable(GL_LIGHT1);
   glEnable(GL_COLOR_MATERIAL);
 
+  //Inicializações das luzes
   glMaterialfv(GL_FRONT, GL_SPECULAR, Specularity);
   glMateriali(GL_FRONT, GL_SHININESS, specMaterial);
 
@@ -301,6 +309,7 @@ void desenhaCuboRobo() {
   glEnd();
 }
 
+//Desenha um dos paus da roda gigante
 void desenhaPau(int angulo, int rotacao_roda, int y){
   GLUquadricObj * base = quadric();
   glPushMatrix();
@@ -310,7 +319,7 @@ void desenhaPau(int angulo, int rotacao_roda, int y){
   gluCylinder(base, 0.1, 0.1, 6, 50, 25);
   glPopMatrix();
 }
-
+//Desenha um dos paus da roda gigante
 void desenhaPau2(int i, GLdouble grau_roda){
   GLUquadricObj * base = quadric();
   glPushMatrix();
@@ -319,7 +328,7 @@ void desenhaPau2(int i, GLdouble grau_roda){
   gluCylinder(base, 0.1, 0.1, 4, 50, 25);
   glPopMatrix();
 }
-
+//Desenha um dos paus da roda gigante
 void desenhaPau3(int i, GLdouble grau_roda, int rotacao_roda, int y){
   GLUquadricObj * base = quadric();
   glPushMatrix();
@@ -330,6 +339,7 @@ void desenhaPau3(int i, GLdouble grau_roda, int rotacao_roda, int y){
   glPopMatrix();
 }
 
+//Função para desenhar cadeira
 void desenhaCadeira(int i, GLdouble grau_roda){
 
   glPushMatrix();
@@ -347,6 +357,7 @@ void desenhaCadeira(int i, GLdouble grau_roda){
   glPopMatrix();
 }
 
+//Função para desenhar roda gigante
 void desenhaRodaGigante(){
   glTranslatef(-30, 0, 0);
   glRotatef(90, 0, 0, 1);
@@ -415,6 +426,7 @@ void desenhaRodaGigante(){
   rotacao_roda += 1;
 }
 
+//Função para desenhar o robo
 void desenhaRobo(){
   GLfloat detalhes[3] = {0.7, 0.13, 0.13};
   GLfloat corpo[3] = {0.10, 0.10, 0.10};
@@ -633,6 +645,7 @@ void desenhaRobo(){
   glPopMatrix();
 }
 
+//Função para desenhar o vidro
 void drawGlass(){
   int i, j;
   GLfloat cor_vidro[4] = {0.69, 0.89, 0.9, 0.4};
@@ -697,6 +710,7 @@ void desenhaParede(void) {
   }
 }
 
+//Desenha os outros objetos do labirinto
 void desenhaObjetos(void) {
   glTranslatef(10 - (MAXLAB/2), 12 - (MAXLAB/2), 0.3);
   //Cabeca
@@ -831,7 +845,7 @@ void desenhaObjetos(void) {
   glPopMatrix();
 }
 
-//AJEITAR CORES
+//Desenha o NURBS (tobogã)
 void desenhaNurbs(void){
    int u, v, un = 50, vn = 50;
    GLfloat cor[3] = { 0, 0.75, 1 };
@@ -891,6 +905,7 @@ void desenhaNurbs(void){
    }
 }
 
+//Função que desenha tudo
 void desenha(void) {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -1077,6 +1092,7 @@ void desenha(void) {
   glFlush();
 }
 
+//Função de redesenho
 void Redesenha(int) {
   glutPostRedisplay();
   desenha();
@@ -1097,6 +1113,7 @@ void AlteraTamanhoJanela(GLsizei w, GLsizei h) {
 	gluPerspective(45.0f, ((GLfloat)w / (GLfloat)h), 1.0f, 100.0f);
 }
 
+//Função para carregar os arquivos BMP como texturas
 void loadTexture(const char * imagepath, int i){
   unsigned char header[54]; //Todo bmp começa com um header de 54bytes
   unsigned int dataPos, width, height; //Posicao onde os dados começam no arquivo
