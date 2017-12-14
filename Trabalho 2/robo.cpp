@@ -7,7 +7,7 @@ int count_cam;
 int finished = 0;
 
 GLfloat lightpos1[] = {0, 0, 0};
-
+GLfloat lightpos2[] = {0, 0, 0};
 GLdouble rotacao_roda = 0;
 GLdouble grau_roda = 0;
 GLdouble base_grau_roda = 0.01745;
@@ -80,6 +80,14 @@ int labirinto[MAXLAB][MAXLAB] = {
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}  //9
 };
 
+GLfloat ctrlpoints[4][4][3] = { // Controle do Nurbs;
+  { { -2.5, 3.0, -1.5 }, { -0.5, 2.0, -1.5 }, { 0.5, 2.5, -1.5 }, { 2.5, 1.5, -1.5 } },
+  { { -2.5, 1.0, -0.5 }, { -0.5, -2.0, -0.5 }, { 0.5, 0, -0.5 }, { 2.5, -3,-0.5 } },
+  { { -2.5, 1.0,  0.5 }, { -0.5, -2.0, 0.5 }, { 0.5, 0,  0.5 }, { 2.5, -3, 0.5 } },
+  { { -2.5, 3.0,  1.5 }, { -0.5, 2.0, 1.5 }, { 0.5, 2.5,  1.5 }, { 2.5, 1.5, 1.5 } },
+};
+
+
 // Inicializa parametros de rendering
 void Inicializa(void) {
   GLfloat AmbientLight1[] = {0.2, 0.2, 0.2, 1.0};
@@ -114,6 +122,8 @@ void Inicializa(void) {
   lightpos1[4] = 1;
   glLightfv(GL_LIGHT1, GL_POSITION, lightpos1);
 
+  //lightpos2[0] =
+
   //Variáveis da transparencia?
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -124,7 +134,7 @@ void Inicializa(void) {
   points[4].x = 14; points[4].y = INF; points[4].speedx = 0; points[4].speedy = -SPEED; points[4].nextdir = 3;
   points[6].x = INF; points[6].y = 4; points[6].speedx = SPEED; points[6].speedy = 0; points[6].nextdir = 6;
   points[7].x = 28; points[7].y = INF; points[7].speedx = 0; points[7].speedy = SPEED; points[7].nextdir = 7;
-  points[8].x = INF; points[8].y = 13; points[8].speedx = -SPEED; points[8].speedy = 0; points[8].nextdir = 5; //
+  points[8].x = INF; points[8].y = 13; points[8].speedx = -SPEED; points[8].speedy = 0; points[8].nextdir = 5;
   points[9].x = 20; points[9].y = INF; points[9].speedx = 0; points[9].speedy = SPEED; points[9].nextdir = 4;
   points[10].x = INF; points[10].y = 22; points[10].speedx = SPEED; points[10].speedy = 0; points[10].nextdir = 1;
   points[11].x = 26; points[11].y = INF; points[11].speedx = -SPEED; points[11].speedy = 0;  points[11].nextdir = 11;
@@ -188,10 +198,12 @@ void getViewPos(unsigned char key, int x, int y){
     if(key == '6') rotatexthird += 1;
   }
   if(key == 'q' || key == '/') look = 1;
-  if(key == 'w' || key == ',') look = 2;
+  if(key == 'w' || key == ',') look = look == 2 ? 12 : 2;
   if(key == 'e' || key == '.') look =  look == 3 ? 6 : 3;
   if(key == 'r' || key == 'p') look = 4;
-  if(key == 't' || key == 'y') look =  look == 5 ? 7 : 5 ;
+  if(key == 't' || key == 'y') look =  look == 5 ? 7 : 5;
+  if(key == 'a') look = 8;
+  if(key == 's' || key == 'o') look = look == 9 ? 10 : 9;
 }
 
 //Função para desenhar o cubo.
@@ -333,7 +345,7 @@ void desenhaCadeira(int i, GLdouble grau_roda){
 }
 
 void desenhaRodaGigante(){
-  glTranslatef(-20, 0, 0);
+  glTranslatef(-30, 0, 0);
   glRotatef(90, 0, 0, 1);
   glColor3f(0.43f, 0.21f, 0.01f);
   glPushMatrix();
@@ -628,7 +640,7 @@ void drawGlass(){
         glPushMatrix();
         //Faz a parte de cima da janelinha
         glRotatef(270, 0, 0, 1);
-        glTranslatef(i - MAXLAB/2 + 20, j - MAXLAB / 2 - 1, -0.30);
+        glTranslatef(i - MAXLAB/2 + 30, j - MAXLAB / 2 - 1, -0.30);
         desenhaCubo(i, j);
         //Faz a parte de baixo da janelinha
         glTranslatef(0, 0, 3);
@@ -816,6 +828,65 @@ void desenhaObjetos(void) {
   glPopMatrix();
 }
 
+//AJEITAR CORES
+void desenhaNurbs(void){
+   int u, v, un = 50, vn = 50;
+   GLfloat cor[3] = { 0, 0.75, 1 };
+   GLfloat corEscada[3] = { 1, 1, 1 };
+   glPushMatrix();
+   glScalef(3, 0.5, 3);
+   glTranslatef(4.5, 6, 1.2);
+   glRotatef(90, 1, 0, 0);
+	glColor3fv(cor);
+	glMap2f(GL_MAP2_VERTEX_3, 0, 1, 12, 4, 0, 1, 3, 4, &ctrlpoints[0][0][0]);
+	glEnable(GL_MAP2_VERTEX_3);
+	glEnable(GL_AUTO_NORMAL);
+	glBegin(GL_QUADS);
+	for (u = 0; u < un; u++) {
+		for (v = 0; v < vn; v++) {
+			glEvalCoord2f((GLfloat)v / vn, (GLfloat)(u+1) / un);
+			glEvalCoord2f((GLfloat)(v+1) / vn, (GLfloat)(u+1) / un);
+			glEvalCoord2f((GLfloat)(v+1) / vn, (GLfloat)u / un);
+			glEvalCoord2f((GLfloat)v / vn, (GLfloat)u / un);
+		}
+	}
+	glEnd();
+   glPopMatrix();
+
+   for(int i = 8; i > 0; i--){
+   glPushMatrix();
+   glColor3fv(corEscada);
+   glTranslatef(5.9, 3.5, i);
+   glRotatef(90, 1, 0, 0);
+   GLUquadricObj * base = quadric();
+   gluCylinder(base, 0.08, 0.08, 1, 50, 25);
+   glPopMatrix();
+   }
+
+   for(int i = 0; i < 2; i+= 1){
+   glPushMatrix();
+   glTranslatef(5.9, 3.5-i, 0);
+   GLUquadricObj * base = quadric();
+   gluCylinder(base, 0.1, 0.1, 10, 50, 25);
+   glPopMatrix();
+   }
+
+   for(double i = 0; i < 1; i+=0.8){
+   glPushMatrix();
+   glTranslatef(8.8, 3.4-i, 0);
+   GLUquadricObj * base = quadric();
+   gluCylinder(base, 0.08, 0.01, 6, 50, 25);
+   glPopMatrix();
+   }
+
+   for(double i = 0; i < 1; i+=0.8){
+   glPushMatrix();
+   glTranslatef(14.8, 3.4-i, 0);
+   GLUquadricObj * base = quadric();
+   gluCylinder(base, 0.08, 0.01, 4, 50, 25);
+   glPopMatrix();
+   }
+}
 
 void desenha(void) {
   glMatrixMode(GL_MODELVIEW);
@@ -838,17 +909,25 @@ void desenha(void) {
     //printf("%lf %lf %lf\n", rotatextop, rotateytop, rotateztop);
     gluLookAt(rotatextop, rotateytop, rotateztop, 0, 0, 0, 0, 1, 0);
   }
-  else if(look == 2){
-    if(!finished)
-      gluLookAt(robox - (MAXLAB/2) + xAdjust, roboy - (MAXLAB/2) + yAdjust, 3, robox - (MAXLAB/2), roboy - (MAXLAB/2), centerzthird, 0, 0, 1);
+  else if(look == 2 || look == 12){
+    if(!finished){
+      if(look == 2)
+         gluLookAt(robox - (MAXLAB/2) + xAdjust, roboy - (MAXLAB/2) + yAdjust, 3, robox - (MAXLAB/2), roboy - (MAXLAB/2), centerzthird, 0, 0, 1);
+      else
+         gluLookAt(robox - (MAXLAB/2) - xAdjust, roboy - (MAXLAB/2) - yAdjust, 3, robox - (MAXLAB/2), roboy - (MAXLAB/2), centerzthird, 0, 0, 1);
+      }
     else
       gluLookAt( 19.0, 25.0, 4.0, 14.0, 17.0, 1.0, 0.0, 0.0, 1.0);
   }
-  else if(look == 3) gluLookAt(-40.0, -4.0, 12.0, 0.0, 0.0, 5.0, 0.0, 0.0, 1.0);
+  else if(look == 3) gluLookAt(-50.0, -4.0, 16.0, -20.0, 0.0, 5.0, 0.0, 0.0, 1.0);
   else if(look == 4) gluLookAt(-6.0, 0.0, 2.0, 0.0, -7.0, -2.0, 0.0, 0.0, 1.0);
   else if(look == 5) gluLookAt( -1.0, 3.0, 5.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0);
-  else if(look == 6) gluLookAt( -19.0, -20.0, 23.0, -19.0, -3.0, 8.0, 0.0, 0.0, 1.0);
+  else if(look == 6) gluLookAt( -29.0, -20.0, 23.0, -29.0, -3.0, 8.0, 0.0, 0.0, 1.0);
   else if(look == 7) gluLookAt( 7.0, 3.0, 4.0, 2.0, 1.0, 1.0, 0.0, 0.0, 1.0);
+  else if(look == 8) gluLookAt(-12, -1, 1, -30, 0, 7.5, 0, 0, 1);
+  else if(look == 9) gluLookAt(-50, 7, 23, -35, 10, 10, 0, 0, 1);
+  else if(look == 10) gluLookAt(-40, 1, 22, -34, 14, 4, 0, 0, 1);
+  else if(look == 11) gluLookAt(-14, -1, 2, -30, 0, 7.5, 0, 0, 1);
   if(chao){
     //INICIO DO CHAO
     glPushMatrix();
@@ -857,14 +936,14 @@ void desenha(void) {
     //Desenhar o chao;
     glColor3f(0.49, 0.99, 0);
     glBegin(GL_QUADS);
-    glTexCoord2f(-2*MAXLAB/2, -2*MAXLAB/2 - 3);
-    glVertex3f(-2*MAXLAB/2, -2*MAXLAB/2 - 3, -0.001);
-    glTexCoord2f(2*MAXLAB/2, -2*MAXLAB/2 - 3);
-    glVertex3f(2*MAXLAB/2, -2*MAXLAB/2 - 3, -0.001);
-    glTexCoord2f(2*MAXLAB/2, 2*MAXLAB/2 + 3);
-    glVertex3f(2*MAXLAB/2, 2*MAXLAB/2 + 3, -0.001);
-    glTexCoord2f(-2*MAXLAB/2, 2*MAXLAB/2 + 3);
-    glVertex3f(-2*MAXLAB/2, 2*MAXLAB/2 + 3, -0.001);
+    glTexCoord2f(-3*CENTRO, -3*CENTRO - 3);
+    glVertex3f(-3*CENTRO, -3*CENTRO - 3, -0.001);
+    glTexCoord2f(3*CENTRO, -3*CENTRO - 3);
+    glVertex3f(3*CENTRO, -3*CENTRO - 3, -0.001);
+    glTexCoord2f(3*CENTRO, 3*CENTRO + 3);
+    glVertex3f(3*CENTRO, 3*CENTRO + 3, -0.001);
+    glTexCoord2f(-3*CENTRO, 3*CENTRO + 3);
+    glVertex3f(-3*CENTRO, 3*CENTRO + 3, -0.001);
     glEnd();
     glPopMatrix();
     glDisable(GL_TEXTURE_2D);
@@ -985,6 +1064,7 @@ void desenha(void) {
 
   desenhaObjetos();
   desenhaRodaGigante();
+  desenhaNurbs();
 
   glEnable(GL_TEXTURE_2D);
   drawGlass();
