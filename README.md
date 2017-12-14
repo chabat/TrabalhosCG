@@ -9,11 +9,11 @@ Para executar o programa, basta abrir um terminal na pasta do projeto e digitar 
 Controle Das Câmeras: O programa possui várias câmeras, para alternar entre elas, basta apertar as teclas correspondentes, seguindo a lista:
 
 	TECLA Q : Câmera aérea, de cima do labirinto.
-	\*TECLA W : Câmera que segue o robô, em terceira pessoa.
-	\*TECLA E: Câmera que mostra a roda gigante.
+	*TECLA W : Câmera que segue o robô, em terceira pessoa.
+	*TECLA E: Câmera que mostra a roda gigante.
 	TECLA R: Câmera que mostra o antigo robô destruído.
-	\*TECLA T: Câmera que mostra a fonte no centro do labirinto.
+	*TECLA T: Câmera que mostra a fonte no centro do labirinto.
 	TECLA A: Câmera que mostra a vista através da janela, dentro do labirinto.
-	\*TECLA S: Câmera que mostra o tobogã.
+	*TECLA S: Câmera que mostra o tobogã.
 
-OBS: As Câmeras que possuem “\*” em sua descrição possuem mais de um ângulo de visão, para alternar entre os ângulos de visão, basta pressionar mais uma vez a tecla correspondente.
+OBS: As Câmeras que possuem “*” em sua descrição possuem mais de um ângulo de visão, para alternar entre os ângulos de visão, basta pressionar mais uma vez a tecla correspondente.
