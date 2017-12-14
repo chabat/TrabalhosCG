@@ -42,11 +42,13 @@ GLdouble yAdjust = -2;
 GLuint tex[2];
 float tex_coord = 2;
 
+//Flag da janelinha
+int janelinha = 0;
 
 //Matriz do Labirinto
 int labirinto[MAXLAB][MAXLAB] = {
 // 0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
-  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //0
+  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //0
   {1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1}, //1
   {1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1}, //2
   {1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1}, //3
@@ -111,6 +113,9 @@ void Inicializa(void) {
   lightpos1[3] = 30;
   lightpos1[4] = 1;
   glLightfv(GL_LIGHT1, GL_POSITION, lightpos1);
+
+  //Variáveis da transparencia?
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   points[0].x = INF; points[0].y = 14; points[0].speedx = SPEED; points[0].speedy = 0; points[0].nextdir = 1;
   points[1].x = 10; points[1].y = INF; points[1].speedx = -SPEED; points[1].speedy = 0; points[1].nextdir = 11;
@@ -221,11 +226,11 @@ void desenhaCubo(int posi, int posj) {
   };
   glBegin(GL_QUADS);
   for (i = 0; i < 6; i++) {
-    if(posi == 0 && i == 1) glColor3fv(cores[0]);
-    else if(posi == MAXLAB-1 && i == 3) glColor3fv(cores[0]);
-    else if(posj == 0 && i == 5) glColor3fv(cores[0]);
-    else if(posj == MAXLAB-1 && i == 4) glColor3fv(cores[0]);
-    else glColor3fv(cores[i]);
+      if(posi == 0 && i == 1) glColor3fv(cores[0]);
+      else if(posi == MAXLAB-1 && i == 3) glColor3fv(cores[0]);
+      else if(posj == 0 && i == 5) glColor3fv(cores[0]);
+      else if(posj == MAXLAB-1 && i == 4) glColor3fv(cores[0]);
+      else glColor3fv(cores[i]);
     for (j = 0; j < 4; j++){
       if(pos >= 0 && pos < 4) glNormal3f(0, -1, 0);
       if(pos >= 4 && pos < 8) glNormal3f(-1, 0, 0);
@@ -613,12 +618,59 @@ void desenhaRobo(){
   glPopMatrix();
 }
 
+void drawGlass(){
+  int i, j;
+  GLfloat cor_vidro[4] = {0.69, 0.89, 0.9, 0.4};
+
+  for (i = 0; i < MAXLAB; i++) {
+    for (j = 0; j < MAXLAB; j++) {
+      if (labirinto[i][j] == 2) {
+        glPushMatrix();
+        //Faz a parte de cima da janelinha
+        glRotatef(270, 0, 0, 1);
+        glTranslatef(i - MAXLAB/2 + 20, j - MAXLAB / 2 - 1, -0.30);
+        desenhaCubo(i, j);
+        //Faz a parte de baixo da janelinha
+        glTranslatef(0, 0, 3);
+        desenhaCubo(i, j);
+
+        //glDisable(GL_LIGHTING);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_COLOR_MATERIAL);
+
+        glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,cor_vidro);
+        glTranslatef(0, 0, -2);
+        glScalef(1, 1, 2);
+        glRotatef(90, 0, 1, 0);
+        glBegin(GL_QUADS);
+        glVertex2f(-1, 1);
+        glVertex2f(-1, 0);
+        glVertex2f(0, 0);
+        glVertex2f(0, 1);
+        glEnd();
+
+
+        glEnable(GL_COLOR_MATERIAL);
+        glDisable(GL_BLEND);
+        //glEnable(GL_LIGHTING);
+
+        //glDisable(GL_TEXTURE_2D);
+
+        //glEnable(GL_TEXTURE_2D);
+        glPopMatrix();
+      }
+    }
+  }
+}
+
 //Desenha as paredes do labirinto
 void desenhaParede(void) {
+
   int i, j;
   for (i = 0; i < MAXLAB; i++) {
     for (j = 0; j < MAXLAB; j++) {
-      if (labirinto[i][j]) {
+      if (labirinto[i][j] == 1) {
       	glPushMatrix();
       	glScalef(1, 1, 4);
       	glTranslatef(i - MAXLAB/2, j - MAXLAB / 2, 0);
@@ -933,6 +985,11 @@ void desenha(void) {
 
   desenhaObjetos();
   desenhaRodaGigante();
+
+  glEnable(GL_TEXTURE_2D);
+  drawGlass();
+  glDisable(GL_TEXTURE_2D);
+
   glutSwapBuffers();
   glFlush();
 }
