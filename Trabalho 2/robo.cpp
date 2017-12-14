@@ -27,6 +27,7 @@ GLdouble xAdjust = 0;
 GLdouble yAdjust = -2;
 
 GLuint tex[2];
+float tex_coord = 1;
 
 //Matriz do Labirinto
 int labirinto[MAXLAB][MAXLAB] = {
@@ -101,53 +102,16 @@ void Inicializa(void) {
   points[29].x = INF; points[29].y = 31; points[29].speedx = 0; points[27].speedy = 0; points[29].nextdir = 'E';
 
 ///////////////////////////////////////////////////
-  unsigned int grass_height, grass_width, wall_height, wall_width;
-  unsigned char *grass = loadBMP("./minegrama.bmp", &grass_height, &grass_width);
-  unsigned char *wall = loadBMP("./mineleaves.bmp", &wall_height, &wall_width);
-
   //n sei bem
   glShadeModel(GL_SMOOTH);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
   //Cria duas texturas do opengl
-  glGenTextures(2, tex);
+  glGenTextures(1, tex);
+  loadTexture("./minegrama.bmp", 0);
+  loadTexture("./wood.bmp", 1);
 
-  //"Liga" a nova textura, todas as funções de textura posteriores vão modificar ela
-  glBindTexture(GL_TEXTURE_2D, tex[0]);
-  //"Dá" a imagem ao opengl
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, grass_width, grass_height, 0, GL_BGR, GL_UNSIGNED_BYTE, grass);
-  // //Constroi MipMap
-  // gluBuild2DMipmaps(tex[0], GL_RGB, grass_width, grass_height, GL_RGB, GL_UNSIGNED_BYTE, grass);
-  // //MipMap coisa la, n sei bemt tambem
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-  //Repetir
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  //Oque fazer se a textura não corresponder ao poligono
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  //Substitui a cor original
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-  //"Liga" a nova textura, todas as funções de textura posteriores vão modificar ela
-  glBindTexture(GL_TEXTURE_2D, tex[1]);
-  //"Dá" a imagem ao opengl
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wall_width, wall_height, 0, GL_BGR, GL_UNSIGNED_BYTE, wall);
-  // //Constroi MipMap
-  // gluBuild2DMipmaps(tex[1], GL_RGB, grass_width, grass_height, GL_RGB, GL_UNSIGNED_BYTE, wall);
-  // //MipMap coisa la, n sei bemt tambem
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-  //Repetir
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  //Oque fazer se a textura não corresponder ao poligono
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  //Substitui a cor original
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-
-///////////////////////////////////////////////////
+  ////////////////////////////////////////////////
 }
 
 //Desenha quadrica
@@ -219,9 +183,11 @@ void desenhaCubo(int posi, int posj) {
     else if(posj == MAXLAB-1 && i == 4) glColor3fv(cores[0]);
     else glColor3fv(cores[i]);
     for (j = 0; j < 4; j++){
-      glVertex3fv(cords[cr[pos]]);
-      glTexCoord3fv(cords[cr[pos]]);
-      pos++;
+      if(j == 0) glTexCoord2f(-tex_coord, -tex_coord);
+      else if(j == 1) glTexCoord2f(tex_coord, -tex_coord);
+      else if(j == 2) glTexCoord2f(tex_coord, tex_coord);
+      else glTexCoord2f(-tex_coord, tex_coord);
+      glVertex3fv(cords[cr[pos++]]);
     }
   }
   glEnd();
@@ -697,6 +663,9 @@ void desenha(void) {
   else{
     gluLookAt(robox-(MAXLAB/2)+xAdjust, roboy-(MAXLAB/2)+yAdjust, 3, robox-(MAXLAB/2), roboy-(MAXLAB/2), centerzthird, 0, 0, 1);
   }
+
+  tex_coord = 10;
+
   //INICIO DO CHAO
   glPushMatrix();
   glEnable(GL_TEXTURE_2D);
@@ -704,40 +673,42 @@ void desenha(void) {
   //Desenhar o chao;
   glColor3f(0, 0.39, 0);
   glBegin(GL_QUADS);
-  glVertex3f(-MAXLAB/2, -MAXLAB/2 - 3, -0.001);
-  glTexCoord3f(-MAXLAB/2, -MAXLAB/2 - 3, -0.001);
+  glTexCoord2f(-tex_coord, -tex_coord);
+  glVertex3f(-30, -30, -0.001);
 
-  glVertex3f(MAXLAB/2, -MAXLAB/2 - 3, -0.001);
-  glTexCoord3f(MAXLAB/2, -MAXLAB/2 - 3, -0.001);
+  glTexCoord2f(tex_coord, -tex_coord);
+  glVertex3f(30, -30, -0.001);
 
-  glVertex3f(MAXLAB/2, MAXLAB/2 + 3, -0.001);
-  glTexCoord3f(MAXLAB/2, MAXLAB/2 + 3, -0.001);
+  glTexCoord2f(tex_coord, tex_coord);
+  glVertex3f(30, 30, -0.001);
 
-  glVertex3f(-MAXLAB/2, MAXLAB/2 + 3, -0.001);
-  glTexCoord3f(-MAXLAB/2, MAXLAB/2 + 3, -0.001);
+  glTexCoord2f(-tex_coord, tex_coord);
+  glVertex3f(-30, 30, -0.001);
   glEnd();
-  glDisable(GL_TEXTURE_2D);
   glPopMatrix();
   //FIM DO CHAO
 
+  tex_coord = 0.5;
 
-  glPushMatrix();
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, tex[1]);
-  glTranslatef(0, 0, 10);
-  glBegin(GL_QUADS);
-  glVertex3f(-1, -1, 0); glTexCoord3f(-1, -1, 0); //Especifica cada vértice
-  glVertex3f(1, -1, 0); glTexCoord3f(1, -1, 0);
-  glVertex3f(1, 1, 0); glTexCoord3f(1, 1, 0);
-  glVertex3f(-1, 1, 0); glTexCoord3f(-1, 1, 0);
-  glDisable(GL_TEXTURE_2D);
-  glEnd();
-  glPopMatrix();
+  // glPushMatrix();
+  // glBindTexture(GL_TEXTURE_2D, tex[1]);
+  // glTranslatef(0, 0, 10);
+  // glBegin(GL_QUADS);
+  // glVertex3f(-1, -1, 0); glTexCoord2f(-tex_coord, -tex_coord); //Especifica cada vértice
+  // glVertex3f(1, -1, 0); glTexCoord2f(tex_coord, -tex_coord);
+  // glVertex3f(1, 1, 0); glTexCoord2f(tex_coord, tex_coord);
+  // glVertex3f(-1, 1, 0); glTexCoord2f(-tex_coord, tex_coord);
+  // glDisable(GL_TEXTURE_2D);
+  // glEnd();
+  // glPopMatrix();
 
   //////////////////////////////////////////////////////////////////////////////
-  //glBindTexture(GL_TEXTURE_2D, tex[1]);
-  //desenhaParede();
+  glBindTexture(GL_TEXTURE_2D, tex[1]);
+  desenhaParede();
 
+  //Volta o MatrixMode ao normal
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
 	glPushMatrix();
   // robox += speedx; roboy += speedy;
@@ -781,28 +752,28 @@ void AlteraTamanhoJanela(GLsizei w, GLsizei h) {
 	gluPerspective(45.0f, ((GLfloat)w / (GLfloat)h), 1.0f, 100.0f);
 }
 ///////////////////////////////////////////////////////////////////
-unsigned char * loadBMP(const char * imagepath, unsigned int *height, unsigned int *width){
+void loadTexture(const char * imagepath, int i){
   unsigned char header[54]; //Todo bmp começa com um header de 54bytes
-  unsigned int dataPos; //Posicao onde os dados começam no arquivo
+  unsigned int dataPos, width, height; //Posicao onde os dados começam no arquivo
   unsigned imageSize; //Largura*Altura*3
   unsigned char * data; //Dados RGB
 
   //Abre arquivo binário em modo de leitura
   FILE *img = fopen(imagepath, "rb");
-  if(!img){printf("Imagem da textura não pode ser carregada!\n"); return 0;}
+  if(!img){printf("Imagem da textura não pode ser carregada!\n"); return;}
 
-  if(fread(header, 1, 54, img) != 54 || header[0] != 'B' || header[1] != 'M'){printf("Imagem da textura não é um BMP válido!\n"); return 0;}
+  if(fread(header, 1, 54, img) != 54 || header[0] != 'B' || header[1] != 'M'){printf("Imagem da textura não é um BMP válido!\n"); return;}
 
   //Lê informações do Header
   dataPos    = *(int*)&(header[0x0A]);
   imageSize  = *(int*)&(header[0x22]);
-  *width      = *(int*)&(header[0x12]);
-  *height     = *(int*)&(header[0x16]);
+  width      = *(int*)&(header[0x12]);
+  height     = *(int*)&(header[0x16]);
 
   //printf("Tamanho da imagem: %u, W: %u, H: %d\n", imageSize, width, height);
 
   //Caso o arquivo BMP não esteja corretamente formatado
-  if(imageSize == 0) imageSize = *width * *height*3; // 3 por causa do RGB
+  if(imageSize == 0) imageSize = width * height*3; // 3 por causa do RGB
   if(dataPos == 0) dataPos = 54;
 
   //Aloca buffer e lê
@@ -812,7 +783,23 @@ unsigned char * loadBMP(const char * imagepath, unsigned int *height, unsigned i
   //Fecha o arquivo
   fclose(img);
 
-  return data;
+  //"Liga" a nova textura, todas as funções de textura posteriores vão modificar ela
+  glBindTexture(GL_TEXTURE_2D, tex[i]);
+  //"Dá" a imagem ao opengl
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+  //Constroi MipMap
+  gluBuild2DMipmaps(tex[i], GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+  //MipMap coisa la, n sei bemt tambem
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+  //Repetir
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  //Oque fazer se a textura não corresponder ao poligono
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  //Substitui a cor original
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
 }
 
 ///////////////////////////////////////////////////////////////////
