@@ -6,8 +6,8 @@ GLdouble cam_turny;
 int count_cam;
 int finished = 0;
 
-GLfloat lightpos1[] = {0, 0, 0};
-GLfloat lightpos2[] = {0, 0, 0};
+GLfloat lightpos1[] = {0, 0, 0, 1};
+GLfloat lightpos2[] = {0, 0, 0, 1};
 GLdouble rotacao_roda = 0;
 GLdouble grau_roda = 0;
 GLdouble base_grau_roda = 0.01745;
@@ -91,7 +91,7 @@ GLfloat ctrlpoints[4][4][3] = { // Controle do Nurbs;
 // Inicializa parametros de rendering
 void Inicializa(void) {
   GLfloat AmbientLight1[] = {0.2, 0.2, 0.2, 1.0};
-  GLfloat DiffuseLight1[] = {0.5, 0.5, 0.5, 1};
+  GLfloat DiffuseLight1[] = {1, 1, 1, 1};
   GLfloat SpecularLight1[] = {0.5, 0.5, 0.5,1};
   GLfloat Specularity[] = {0.5, 0.5, 0.5, 1.0};
   GLint specMaterial = 10;
@@ -121,9 +121,12 @@ void Inicializa(void) {
   lightpos1[3] = 30;
   lightpos1[4] = 1;
   glLightfv(GL_LIGHT1, GL_POSITION, lightpos1);
-
-  //lightpos2[0] =
-
+  //-29.0, -3.0, 8.0
+  lightpos2[0] = -29;
+  lightpos2[1] = -3;
+  lightpos2[3] = 8;
+  lightpos2[4] = 1;
+  glLightfv(GL_LIGHT1, GL_POSITION, lightpos2);
   //Variáveis da transparencia?
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
