@@ -81,8 +81,8 @@ int labirinto[MAXLAB][MAXLAB] = {
 // Inicializa parametros de rendering
 void Inicializa(void) {
   GLfloat AmbientLight1[] = {0.2, 0.2, 0.2, 1.0};
-  GLfloat DiffuseLight1[] = {0.5, 0.5, 0.5, 1.0};
-  GLfloat SpecularLight1[] = {0.5, 0.5, 0.5,0.5};
+  GLfloat DiffuseLight1[] = {0.5, 0.5, 0.5, 1};
+  GLfloat SpecularLight1[] = {0.5, 0.5, 0.5,1};
   GLfloat Specularity[] = {0.5, 0.5, 0.5, 1.0};
   GLint specMaterial = 10;
 
@@ -105,6 +105,12 @@ void Inicializa(void) {
   glLightfv(GL_LIGHT1, GL_AMBIENT, AmbientLight1);
   glLightfv(GL_LIGHT1, GL_DIFFUSE, DiffuseLight1);
   glLightfv(GL_LIGHT1, GL_SPECULAR, SpecularLight1);
+
+  lightpos1[0] = 22;
+  lightpos1[1] = 20;
+  lightpos1[3] = 30;
+  lightpos1[4] = 1;
+  glLightfv(GL_LIGHT1, GL_POSITION, lightpos1);
 
   points[0].x = INF; points[0].y = 14; points[0].speedx = SPEED; points[0].speedy = 0; points[0].nextdir = 1;
   points[1].x = 10; points[1].y = INF; points[1].speedx = -SPEED; points[1].speedy = 0; points[1].nextdir = 11;
@@ -267,6 +273,8 @@ void desenhaCuboRobo() {
       if(pos >= 4 && pos < 8) glNormal3f(-1, 0, 0);
       if(pos >= 8 && pos < 12) glNormal3f(0, 1, 0);
       if(pos >= 12 && pos < 16) glNormal3f(1, 0, 0);
+      if(pos >= 16 && pos < 20) glNormal3f(0, 0, 1);
+      if(pos >= 20 && pos < 24) glNormal3f(0, 0, -1);
       glVertex3fv(cords[cr[pos++]]);
     }
   }
@@ -772,11 +780,7 @@ void desenha(void) {
   }
 
 
-  lightpos1[0] = 22;
-  lightpos1[1] = 20;
-  lightpos1[3] = 30;
-  lightpos1[4] = 1;
-  glLightfv(GL_LIGHT1, GL_POSITION, lightpos1);
+
 
   if(look <= 1){
     //printf("%lf %lf %lf\n", rotatextop, rotateytop, rotateztop);
